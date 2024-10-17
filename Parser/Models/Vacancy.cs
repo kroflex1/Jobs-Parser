@@ -1,4 +1,4 @@
-﻿namespace VacancyParser.Models
+﻿namespace Parser.Models
 {
     public class Vacancy
     {
@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public string Role { get; set; }
         public string City { get; set; }
-        public string Url { get; set; }
+        public Uri LinkToSource { get; set; }
         public string Functional { get; set; }
         public string Requirements { get; set; }
         public string KeySkills { get; set; }
