@@ -1,6 +1,6 @@
 ﻿namespace Parser.Models;
 
-public class VacancyParsingSetting
+public class VacancyParseRule
 {
     public string CompanyNameNode { get; set; }
     public string NameNode { get; set; }
