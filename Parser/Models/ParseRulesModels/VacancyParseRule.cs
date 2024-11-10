@@ -1,5 +1,8 @@
 ﻿namespace Parser.Models;
 
+/// <summary>
+/// Представляет правила для парсинга информации о вакансии.
+/// </summary>
 public class VacancyParseRule
 {
     public string CompanyNameNode { get; set; }
