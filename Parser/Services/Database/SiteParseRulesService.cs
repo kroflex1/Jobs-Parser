@@ -12,5 +12,18 @@ public class SiteParseRulesService
         _sitesCollection = mongoDbService.GetCollection<SiteParseRule>("sites");
     }
 
-    public List<SiteParseRule> GetParseRules() => _sitesCollection.Find(_ => true).ToList();
+    public List<SiteParseRule> GetParseRules()
+    {
+        return _sitesCollection.Find(_ => true).ToList();
+    }
+
+    public SiteParseRule GetParseRuleById(string id)
+    {
+        return _sitesCollection.Find(site => site.Id == id).FirstOrDefault();
+    }
+
+    public void UpdateParseRule(string id, SiteParseRule updatedSite)
+    {
+        _sitesCollection.ReplaceOne(site => site.Id == id, updatedSite);
+    }
 }
