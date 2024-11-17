@@ -1,10 +1,17 @@
-﻿namespace Parser.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Parser.Models;
 
 /// <summary>
 /// Представляет правила для парсинга информации о вакансии.
 /// </summary>
 public class VacancyParseRule
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    
     public string CompanyNameNode { get; set; }
     public string NameNode { get; set; }
     public string RoleNode { get; set; }
@@ -15,4 +22,5 @@ public class VacancyParseRule
     public string KeySkillsNode { get; set; }
     public string ConditionsNode { get; set; }
     public string GradeNode { get; set; }
+    public string SalaryNode { get; set; }
 }

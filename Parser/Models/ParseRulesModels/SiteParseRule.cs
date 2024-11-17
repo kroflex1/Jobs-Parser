@@ -1,5 +1,5 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Parser.Models;
 
@@ -11,22 +11,28 @@ public class SiteParseRule
     /// <summary>
     /// Уникальный идентификатор правила парсинга для определенного сайта
     /// </summary>
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
     /// <summary>
     /// Название сайта, для которого установлены правила парсинга
     /// </summary>
+    [Required]
+    [MaxLength(255)]
     public string SiteName { get; set; }
-    
+
     /// <summary>
     /// Правила парсинга страницы с вакансиями
     /// </summary>
+    [ForeignKey("PageWithVacanciesParseRuleId")]
     public PageWithVacanciesParseRule PageWithVacanciesParseRule { get; set; }
-    
+    public int PageWithVacanciesParseRuleId { get; set; }
+
     /// <summary>
     /// Правила парсинга отдельной вакансии
     /// </summary>
+    [ForeignKey("VacancyParseRuleId")]
     public VacancyParseRule VacancyParseRule { get; set; }
+    public int VacancyParseRuleId { get; set; }
 }

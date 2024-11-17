@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Parser.Data;
 using Parser.Models;
 using Parser.Services;
 
@@ -6,15 +7,15 @@ namespace Parser.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ParseRulesController : ControllerBase 
+public class ParseRulesController : ControllerBase
 {
-    private readonly SiteParseRulesService _siteService;
+    private readonly IParseRulesService _parseRulesService;
 
-    public ParseRulesController(SiteParseRulesService siteService)
+    public ParseRulesController(IParseRulesService parseRulesService)
     {
-        _siteService = siteService;
+        _parseRulesService = parseRulesService;
     }
-    
+
     /// <summary>
     /// Получает настройки для парсинга вакансий сайтов.
     /// </summary>
@@ -24,12 +25,12 @@ public class ParseRulesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<List<SiteParseRule>> GetAllParseRules()
+    public async Task<ActionResult<List<SiteParseRule>>> GetAllParseRules()
     {
-        List<SiteParseRule> sites = _siteService.GetParseRules();
+        List<SiteParseRule> sites = await _parseRulesService.GetAllParseRules();
         return Ok(sites);
     }
-    
+
     /// <summary>
     /// Получает настройку парсинга сайта по его id.
     /// </summary>
@@ -40,35 +41,38 @@ public class ParseRulesController : ControllerBase
     [HttpGet("{id:length(24)}", Name = "GetSiteParseRuleById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<SiteParseRule> GetSiteParseRuleById(string id)
+    public async Task<ActionResult<SiteParseRule>> GetSiteParseRuleById(int id)
     {
-        SiteParseRule siteParseRule = _siteService.GetParseRuleById(id);
+        SiteParseRule siteParseRule = await _parseRulesService.GetParseRuleById(id);
         if (siteParseRule == null)
         {
             return NotFound();
         }
+
         return Ok(siteParseRule);
     }
-    
+
     /// <summary>
     /// Обновляет настройки парсинга сайта по его id.
     /// </summary>
     /// <param name="id">Id настройки парсинга.</param>
-    /// <param name="updatedSite">Новые настройки парсинга для сайта.</param>
+    /// <param name="updatedSiteParseRules">Новые настройки парсинга для сайта.</param>
     /// <returns>Результат операции обновления.</returns>
     /// <response code="204">Настройки успешно обновлены.</response>
     /// <response code="404">Если настройка парсинга с указанным идентификатором не найдена.</response>
     [HttpPatch("{id:length(24)}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult UpdateSiteParseRule(string id, [FromBody] SiteParseRule updatedSite)
+    public async Task<IActionResult> UpdateSiteParseRule(int id, [FromBody] SiteParseRule updatedSiteParseRules)
     {
-        SiteParseRule existingSite = _siteService.GetParseRuleById(id);
-        if (existingSite == null)
+        try
+        {
+            await _parseRulesService.UpdateParseRule(id, updatedSiteParseRules);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-        _siteService.UpdateParseRule(id, updatedSite);
-        return NoContent();
     }
 }

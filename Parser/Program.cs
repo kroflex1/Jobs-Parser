@@ -1,12 +1,11 @@
 using System.Reflection;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using Parser;
+using Microsoft.EntityFrameworkCore;
+using Parser.Data;
 using Parser.Services;
 using Parser.Services.VacancyParsers;
 using Parser.Services.XlsxGenerators;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Добавляем контроллеры
 builder.Services.AddControllers();
@@ -14,31 +13,26 @@ builder.Services.AddControllers();
 // Регистрация сервисов
 builder.Services.AddHttpClient<VacancyParserService>();
 builder.Services.AddSingleton<XlsxGeneratorService>();
-builder.Services.AddSingleton<MongoDbService>();
-builder.Services.AddSingleton<SiteParseRulesService>();
 
 // Добавляем Swagger для документирования API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Добавление MongoClient как singleton
-builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
-{
-    MongoDbSettings settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-    return new MongoClient(settings.ConnectionString);
-});
+// Добавляем DbContext с использованием PostgreSQL
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+builder.Services.AddScoped<IParseRulesService, ParseRulesService>();
 
 // Добавьте Swagger и подключите XML-документацию
 builder.Services.AddSwaggerGen(options =>
 {
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
 
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Настройка Swagger в режиме разработки
 if (app.Environment.IsDevelopment())

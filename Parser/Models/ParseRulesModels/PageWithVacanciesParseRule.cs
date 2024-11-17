@@ -1,13 +1,21 @@
-﻿namespace Parser.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Parser.Models;
 
 /// <summary>
 /// Представляет правила для парсинга страницы с вакансиями.
 /// </summary>
 public class PageWithVacanciesParseRule
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    
     /// <summary>
     /// URL-адрес страницы с вакансиями
     /// </summary>
+    [Required]
     public Uri UrlWithVacancies { get; set; }
 
     /// <summary>
