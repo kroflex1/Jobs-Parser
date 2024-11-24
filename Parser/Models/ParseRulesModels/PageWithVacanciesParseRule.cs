@@ -22,6 +22,11 @@ public class PageWithVacanciesParseRule
     /// Параметр запроса для нахождения заголовка вакансии
     /// </summary>
     public string ParamNameForVacancyTitle { get; set; }
+    
+    /// <summary>
+    /// Параметр запроса для нахождения вакансий только с зарплатой
+    /// </summary>
+    public string ParamNameForVacanciesWithSalary { get; set; }
 
     /// <summary>
     /// Нода для ссылки на вакансию

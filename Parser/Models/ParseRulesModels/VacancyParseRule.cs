@@ -11,16 +11,39 @@ public class VacancyParseRule
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    
+
+    /// <summary>
+    /// Нода для получения названия компании
+    /// </summary>
     public string CompanyNameNode { get; set; }
+
+    /// <summary>
+    /// Нода для получения названия вакансии
+    /// </summary>
     public string NameNode { get; set; }
+
+    /// <summary>
+    /// Нода для получения...
+    /// </summary>
     public string RoleNode { get; set; }
+
+    /// <summary>
+    /// Правила для получения места работы
+    /// </summary>
     public string CityNode { get; set; }
-    public string UrlNode { get; set; }
-    public string FunctionalNode { get; set; }
-    public string RequirementsNode { get; set; }
-    public string KeySkillsNode { get; set; }
-    public string ConditionsNode { get; set; }
+
+    /// <summary>
+    /// Нодя для получения описания вакансии
+    /// </summary>
+    public string DescriptionNode { get; set; }
+
+    /// <summary>
+    /// Нода для получения грейда сотрудника
+    /// </summary>
     public string GradeNode { get; set; }
+
+    /// <summary>
+    /// Нода для получения зарплаты
+    /// </summary>
     public string SalaryNode { get; set; }
 }
