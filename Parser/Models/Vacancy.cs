@@ -14,6 +14,8 @@
         public string Grade { get; set; }
         public int SalaryFrom { get; set; }
         public int SalaryTo { get; set; }
+        
+        public DateTime CreationTime {get; set;}
 
         public double getAverageSalaryValue()
         {
