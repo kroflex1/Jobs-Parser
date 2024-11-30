@@ -41,7 +41,7 @@ public class ParseRulesController : ControllerBase
     [HttpGet("{id:length(24)}", Name = "GetSiteParseRuleById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<SiteParseRule>> GetSiteParseRuleById(int id)
+    public async Task<ActionResult<SiteParseRule>> GetSiteParseRuleById(Guid id)
     {
         SiteParseRule siteParseRule = await _parseRulesService.GetParseRuleById(id);
         if (siteParseRule == null)
@@ -63,7 +63,7 @@ public class ParseRulesController : ControllerBase
     [HttpPatch("{id:length(24)}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateSiteParseRule(int id, [FromBody] SiteParseRule updatedSiteParseRules)
+    public async Task<IActionResult> UpdateSiteParseRule(Guid id, [FromBody] SiteParseRule updatedSiteParseRules)
     {
         try
         {

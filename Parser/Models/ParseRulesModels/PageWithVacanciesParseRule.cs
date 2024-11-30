@@ -10,7 +10,7 @@ public class PageWithVacanciesParseRule
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// URL-адрес страницы с вакансиями

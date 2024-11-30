@@ -13,7 +13,7 @@ public class SiteParseRule
     /// </summary>
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Название сайта, для которого установлены правила парсинга
@@ -27,12 +27,12 @@ public class SiteParseRule
     /// </summary>
     [ForeignKey("PageWithVacanciesParseRuleId")]
     public PageWithVacanciesParseRule PageWithVacanciesParseRule { get; set; }
-    public int PageWithVacanciesParseRuleId { get; set; }
+    public Guid PageWithVacanciesParseRuleId { get; set; }
 
     /// <summary>
     /// Правила парсинга отдельной вакансии
     /// </summary>
     [ForeignKey("VacancyParseRuleId")]
     public VacancyParseRule VacancyParseRule { get; set; }
-    public int VacancyParseRuleId { get; set; }
+    public Guid VacancyParseRuleId { get; set; }
 }

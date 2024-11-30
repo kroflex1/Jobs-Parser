@@ -20,8 +20,9 @@ public class ParseRulesService: IParseRulesService
             .Include(s => s.VacancyParseRule)
             .ToListAsync();
     }
+    
 
-    public async Task<SiteParseRule> GetParseRuleById(int id)
+    public async Task<SiteParseRule> GetParseRuleById(Guid id)
     {
         return await _dbContext.SiteParseRules
             .Include(s => s.PageWithVacanciesParseRule)
@@ -29,7 +30,7 @@ public class ParseRulesService: IParseRulesService
             .FirstOrDefaultAsync(s => s.Id == id);
     }
 
-    public async Task UpdateParseRule(int id, SiteParseRule updatedSite)
+    public async Task UpdateParseRule(Guid id, SiteParseRule updatedSite)
     {
         var existingSite = await _dbContext.SiteParseRules.FindAsync(id);
         if (existingSite == null)
