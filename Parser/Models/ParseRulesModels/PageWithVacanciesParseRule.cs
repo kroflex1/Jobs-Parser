@@ -16,7 +16,7 @@ public class PageWithVacanciesParseRule
     /// URL-адрес страницы с вакансиями
     /// </summary>
     [Required]
-    public Uri UrlWithVacancies { get; set; }
+    public String UrlWithVacancies { get; set; }
 
     /// <summary>
     /// Параметр запроса для нахождения заголовка вакансии
