@@ -21,14 +21,14 @@ public class ApplicationDbContext : DbContext
     
     private void fillWithDefaultValues(ModelBuilder modelBuilder)
     {
-        Guid pageWithVacanciesParseRuleId = Guid.NewGuid();
-        Guid vacancyParsuRuleId = Guid.NewGuid();
+        Guid pageWithVacanciesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        Guid vacancyParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         
         modelBuilder.Entity<PageWithVacanciesParseRule>().HasData(
             new PageWithVacanciesParseRule
             {
                 Id = pageWithVacanciesParseRuleId,
-                UrlWithVacancies = new Uri("https://example.com/jobs"),
+                UrlWithVacancies = "https://example.com/jobs",
                 ParamNameForVacancyTitle = "title",
                 ParamNameForVacanciesWithSalary = "only_with_salary",
                 VacancyUrlNode = "//a[@class='vacancy']",
@@ -39,7 +39,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<VacancyParseRule>().HasData(
             new VacancyParseRule
             {
-                Id = vacancyParsuRuleId,
+                Id = vacancyParseRuleId,
                 CompanyNameNode = "//a[@data-qa='vacancy-company-name']/span/span",
                 NameNode = "//h1[@data-qa='vacancy-title']",
                 CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
@@ -52,10 +52,10 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<SiteParseRule>().HasData(
             new SiteParseRule
             {
-                Id = Guid.NewGuid(),
+                Id =  Guid.Parse("00000000-0000-0000-0000-000000000003"),
                 SiteName = "hh.ru",
                 PageWithVacanciesParseRuleId = pageWithVacanciesParseRuleId,
-                VacancyParseRuleId = vacancyParsuRuleId
+                VacancyParseRuleId = vacancyParseRuleId
             }
         );
     }
