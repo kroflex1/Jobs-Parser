@@ -28,7 +28,7 @@ public class ApplicationDbContext : DbContext
             new PageWithVacanciesParseRule
             {
                 Id = pageWithVacanciesParseRuleId,
-                UrlWithVacancies = "https://example.com/jobs",
+                UrlWithVacancies = "https://hh.ru/search/vacancy",
                 ParamNameForVacancyTitle = "title",
                 ParamNameForVacanciesWithSalary = "only_with_salary",
                 VacancyUrlNode = "//a[@class='vacancy']",
