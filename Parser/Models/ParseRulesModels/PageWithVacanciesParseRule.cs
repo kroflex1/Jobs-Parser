@@ -34,7 +34,7 @@ public class PageWithVacanciesParseRule
     public string VacancyUrlNode { get; set; }
 
     /// <summary>
-    /// Нода для номера страницы
+    /// Нода для ссылки, которая перебрасывает на следующую страницу с вкансиями
     /// </summary>
-    public string PageNumberNode { get; set; }
+    public string NextPageNode { get; set; }
 }
