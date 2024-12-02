@@ -31,8 +31,8 @@ public class ApplicationDbContext : DbContext
                 UrlWithVacancies = "https://hh.ru/search/vacancy",
                 ParamNameForVacancyTitle = "title",
                 ParamNameForVacanciesWithSalary = "only_with_salary",
-                VacancyUrlNode = "//a[@class='vacancy']",
-                PageNumberNode = "//div[@class='pagination']"
+                VacancyUrlNode = "//div[contains(@class, 'vacancy-info')]//a[@data-qa='serp-item__title']",
+                NextPageNode = "//a[@data-qa='pager-next']"
             }
         );
     
@@ -43,7 +43,7 @@ public class ApplicationDbContext : DbContext
                 CompanyNameNode = "//a[@data-qa='vacancy-company-name']/span/span",
                 NameNode = "//h1[@data-qa='vacancy-title']",
                 CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
-                DescriptionNode = "//div[@data-qa='vacancy-description'",
+                DescriptionNode = "//div[@data-qa='vacancy-description']",
                 SalaryNode = "//span[@data-qa='vacancy-salary-compensation-type-net']",
                 CreationTimeNode = "//p[@class='vacancy-creation-time-redesigned']/span"
             }
