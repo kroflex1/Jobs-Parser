@@ -4,5 +4,5 @@ namespace Parser.Services.VacancyParsers;
 
 public interface IVacancyParser
 {
-    Vacancy ParseVacancy(string vacancyUrl, VacancyParsingSetting parsingSetting);
+    List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, String keyWord, String region);
 }
