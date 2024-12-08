@@ -35,4 +35,12 @@ public class SiteParseRule
     [ForeignKey("VacancyParseRuleId")]
     public VacancyParseRule VacancyParseRule { get; set; }
     public Guid VacancyParseRuleId { get; set; }
+    
+    [ForeignKey("PageWithResumesParseRuleId")]
+    public PageWithResumesParseRule PageWithResumesParseRule { get; set; }
+    public Guid PageWithResumesParseRuleId { get; set; }
+    
+    [ForeignKey("ResumeParseRuleId")]
+    public ResumeParseRule ResumeParseRule { get; set; }
+    public Guid ResumeParseRuleId { get; set; }
 }
