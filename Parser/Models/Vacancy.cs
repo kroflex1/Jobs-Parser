@@ -2,24 +2,76 @@
 {
     public class Vacancy
     {
+        /// <summary>
+        /// Название компании
+        /// </summary>
         public string CompanyName { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
-        public string City { get; set; }
-        public Uri LinkToSource { get; set; }
-        public string Functional { get; set; }
-        public string Requirements { get; set; }
-        public string KeySkills { get; set; }
-        public string Conditions { get; set; }
-        public string Grade { get; set; }
-        public int SalaryFrom { get; set; }
-        public int SalaryTo { get; set; }
         
-        public DateTime CreationTime {get; set;}
+        /// <summary>
+        /// Название вакансии
+        /// </summary>
+        public string Name { get; set; }
+        
+        /// <summary>
+        /// Город и удалёнка
+        /// </summary>
+        public string City { get; set; }
+        
+        /// <summary>
+        /// Ссылка на вакансию
+        /// </summary>
+        public Uri LinkToSource { get; set; }
+        
+        /// <summary>
+        /// Задачи и функционал, которыми предстоит заниматься на вакансии
+        /// </summary>
+        public string Functional { get; set; }
+        
+        /// <summary>
+        /// Требования
+        /// </summary>
+        public string Requirements { get; set; }
+        
+        /// <summary>
+        /// Ключевые навыки
+        /// </summary>
+        public string KeySkills { get; set; }
+        
+        /// <summary>
+        /// Условия работы
+        /// </summary>
+        public string Conditions { get; set; }
+        
+        /// <summary>
+        /// Зарплата от
+        /// </summary>
+        public int? SalaryFrom { get; set; }
+        
+        /// <summary>
+        /// Зарплата до
+        /// </summary>
+        public int? SalaryTo { get; set; }
+        
+        /// <summary>
+        /// Дата публикации вакансии
+        /// </summary>
+        public DateTime? CreationTime {get; set;}
 
         public double getAverageSalaryValue()
         {
-            return (SalaryFrom + SalaryTo) / 2.0;
+            double sum = 0;
+            int amount = 0;
+            if (SalaryFrom != null)
+            {
+                sum += (int)SalaryFrom;
+                amount++;
+            }
+            if (SalaryTo != null)
+            {
+                sum += (int)SalaryTo;
+                amount++;
+            }
+            return sum / amount;
         }
     }
 }
