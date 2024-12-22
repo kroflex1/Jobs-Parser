@@ -174,7 +174,7 @@ public class DefaultVacancyParser : IVacancyParser
     /// Функциональные обязанности, извлечённые из HTML-документа в соответствии с заданными правилами парсинга.
     /// По умолчанию возвращает пустую строку. Если данные не найдены возвращает пустую строку.
     /// </returns>
-    protected virtual string? GetFunctional(HtmlDocument htmlDocument, JsonElement parseRules)
+    protected virtual string GetFunctional(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         return String.Empty;
     }
@@ -192,12 +192,12 @@ public class DefaultVacancyParser : IVacancyParser
     /// Требования и ожидаемые навыки, извлечённые из HTML-документа в соответствии с заданными правилами парсинга.
     /// По умолчанию возвращает пустую строку. Если данные не найдены возвращает пустую строку.
     /// </returns>
-    protected virtual string? GetRequirements(HtmlDocument htmlDocument, JsonElement parseRules)
+    protected virtual string GetRequirements(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         return String.Empty;
     }
 
-    protected virtual string? GetKeySkills(HtmlDocument htmlDocument, JsonElement parseRules)
+    protected virtual string GetKeySkills(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         return String.Empty;
     }
@@ -215,7 +215,7 @@ public class DefaultVacancyParser : IVacancyParser
     /// Условия работы, извлечённые из HTML-документа в соответствии с заданными правилами парсинга.
     /// По умолчанию возвращает пустую строку. Если данные не найдены возвращает пустую строку.
     /// </returns>
-    protected virtual string? GetConditions(HtmlDocument htmlDocument, JsonElement parseRules)
+    protected virtual string GetConditions(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         return String.Empty;
     }
