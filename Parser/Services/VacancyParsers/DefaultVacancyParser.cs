@@ -61,7 +61,7 @@ public class DefaultVacancyParser : IVacancyParser
         ]);
     }
 
-    public Vacancy ParseVacancy(Uri linkToVacancy, JsonElement parseRules)
+    public Vacancy? ParseVacancy(Uri linkToVacancy, JsonElement parseRules)
     {
         // Создаем HttpRequestMessage для отправки GET-запроса
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, linkToVacancy);
