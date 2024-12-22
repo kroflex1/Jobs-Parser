@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Parser.Utils;
@@ -61,5 +62,41 @@ public  static class TextParser
 
         xpathBuilder.Append("]");
         return xpathBuilder.ToString();
+    }
+    
+    
+    /// <summary>
+    /// Парсит дату.
+    /// </summary>
+    /// <param name="dateText">Строкове значение даты</param>
+    /// <returns>Дату</returns>
+    public static DateTime? ParseDate(string dateText)
+    {
+        // Локаль для русского языка
+        CultureInfo culture = new CultureInfo("ru-RU");
+        string[] formats = { "d MMMM yyyy", "d MMMM", "HH:mm" }; // Форматы для даты с годом; без года; только время
+
+        DateTime result;
+
+        if (DateTime.TryParseExact(dateText, formats, culture, DateTimeStyles.None, out result))
+        {
+            // Если указан только месяц и день, добавляем текущий год
+            if (!Regex.IsMatch(dateText, @"\b\d{4}\b"))
+            {
+                result = result.AddYears(DateTime.Now.Year - result.Year);
+            }
+
+            // Если указано только время, добавляем текущий день, месяц и год
+            if (dateText.Contains(":"))
+            {
+                result = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, result.Hour, result.Minute, 0);
+            }
+        }
+        else
+        {
+            return null;
+        }
+
+        return result;
     }
 }
