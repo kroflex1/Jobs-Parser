@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Parser.Models;
 using Parser.Utils;
@@ -11,7 +13,7 @@ public class DefaultVacancyParser : IVacancyParser
     protected readonly String XPathForFunctionalTitle;
     protected readonly String XPathForRequirementTitle;
     protected readonly String XPathForConditionTitle;
-    
+
 
     public DefaultVacancyParser(HttpClient httpClient)
     {
@@ -88,7 +90,7 @@ public class DefaultVacancyParser : IVacancyParser
             KeySkills = GetKeySkills(htmlDocument, parseRules),
             Conditions = GetConditions(htmlDocument, parseRules),
             SalaryFrom = GetSalaryFrom(htmlDocument, parseRules),
-            SalaryTo =  GetSalaryTo(htmlDocument, parseRules),
+            SalaryTo = GetSalaryTo(htmlDocument, parseRules),
             CreationTime = GetCreationTime(htmlDocument, parseRules)
         };
         return vacancy;
@@ -199,11 +201,24 @@ public class DefaultVacancyParser : IVacancyParser
 
     protected virtual string GetKeySkills(HtmlDocument htmlDocument, JsonElement parseRules)
     {
+        string requirements = GetRequirements(htmlDocument, parseRules);
+
+        // Регулярное выражение для поиска английских слов
+        string pattern = @"\b[A-Za-z]+(?:[-/][A-Za-z]+)*\b";
+        MatchCollection matches = Regex.Matches(requirements, pattern);
+        
+        StringBuilder result = new StringBuilder();
+        foreach (Match match in matches)
+        {
+            result.Append(match.Value).Append("\n");
+        }
+
+        result.Remove(result.Length - 1, 1);
         return String.Empty;
     }
 
     /// <summary>
-    /// Извлекает условия работы вакансии из HTML-документа с использованием переданных настроек парсинга.
+    /// Извлекает информацию о услових работы по вакансии из HTML-документа с использованием переданных настроек парсинга.
     /// </summary>
     /// <param name="htmlDocument">
     /// HTML-документ, содержащий страницу с описанием условий работы.
@@ -219,7 +234,7 @@ public class DefaultVacancyParser : IVacancyParser
     {
         return String.Empty;
     }
-    
+
     protected virtual int? GetSalaryFrom(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         string salaryXPath;
