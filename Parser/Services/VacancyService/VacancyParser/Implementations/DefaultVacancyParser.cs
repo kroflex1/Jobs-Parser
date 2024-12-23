@@ -213,8 +213,11 @@ public class DefaultVacancyParser : IVacancyParser
             result.Append(match.Value).Append("\n");
         }
 
-        result.Remove(result.Length - 1, 1);
-        return String.Empty;
+        if (result.Length > 0)
+        {
+            result.Remove(result.Length - 1, 1);
+        }
+        return result.ToString();
     }
 
     /// <summary>

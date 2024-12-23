@@ -26,27 +26,31 @@ public class SiteParseRule
     /// Правила парсинга страницы с вакансиями
     /// </summary>
     [ForeignKey("PageWithVacanciesParseRuleId")]
-    public PageWithVacanciesParseRule PageWithVacanciesParseRule { get; set; }
+    public virtual PageWithVacanciesParseRule PageWithVacanciesParseRule { get; set; }
+
     public Guid PageWithVacanciesParseRuleId { get; set; }
 
     /// <summary>
     /// Правила парсинга отдельной вакансии
     /// </summary>
     [ForeignKey("VacancyParseRuleId")]
-    public VacancyParseRule VacancyParseRule { get; set; }
+    public virtual VacancyParseRule VacancyParseRule { get; set; }
+
     public Guid VacancyParseRuleId { get; set; }
 
     /// <summary>
     /// Правила парсинга страницы со списком резюме
     /// </summary>
     [ForeignKey("PageWithResumesParseRuleId")]
-    public PageWithResumesParseRule PageWithResumesParseRule { get; set; }
+    public virtual PageWithResumesParseRule PageWithResumesParseRule { get; set; }
+
     public Guid PageWithResumesParseRuleId { get; set; }
-    
+
     /// <summary>
     /// Правила парсинга отдельного резюме
     /// </summary>
     [ForeignKey("ResumeParseRuleId")]
-    public ResumeParseRule ResumeParseRule { get; set; }
+    public virtual ResumeParseRule ResumeParseRule { get; set; }
+
     public Guid ResumeParseRuleId { get; set; }
 }

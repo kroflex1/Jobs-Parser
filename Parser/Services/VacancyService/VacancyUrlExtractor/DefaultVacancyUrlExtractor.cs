@@ -19,13 +19,13 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
         NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] =
-            String.Format("{1} {2}", String.Join(" ", keyWords), String.Join(" ", regions));
+            $"{string.Join(" ", keyWords)} {string.Join(" ", regions)}";
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "true";
         startPageUrl.Query = parameters.ToString();
 
         List<Uri> result = new List<Uri>();
         string vacancyLinkNode = pageWithVacanciesParseRule.GetProperty("VacancyUrlNode").GetString();
-        string nextPageNode = pageWithVacanciesParseRule.GetProperty("VacancyUrlNode").GetString();
+        string nextPageNode = pageWithVacanciesParseRule.GetProperty("NextPageNode").GetString();
         Uri currentPageUrl = startPageUrl.Uri;
         while (currentPageUrl != null)
         {

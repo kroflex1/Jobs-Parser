@@ -27,11 +27,13 @@ public  static class TextParser
         }
         if (matches.Count > 0)
         {
-            firstNumber = int.Parse(matches[0].Value.Replace(" ", ""));
+            string value = matches[0].Value.Replace(" ", "");
+            firstNumber = int.Parse(value);
         }
         if (matches.Count > 1)
         {
-            secondNumber = int.Parse(matches[1].Value.Replace(" ", ""));
+            string value = matches[1].Value.Replace(" ", "");
+            secondNumber = int.Parse(value);
         }
         return Tuple.Create(firstNumber, secondNumber);
     }
