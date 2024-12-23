@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Parser.Models;
 
 namespace Parser.Data;
@@ -18,6 +19,12 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<PageWithVacanciesParseRule>()
+            .Property(e => e.Rules)
+            .HasColumnType("jsonb");
+        modelBuilder.Entity<VacancyParseRule>()
+            .Property(e => e.Rules)
+            .HasColumnType("jsonb");
         fillWithDefaultValues(modelBuilder);
     }
     
@@ -32,11 +39,14 @@ public class ApplicationDbContext : DbContext
             new PageWithVacanciesParseRule
             {
                 Id = pageWithVacanciesParseRuleId,
-                UrlWithVacancies = "https://hh.ru/search/vacancy",
-                ParamNameForVacancyTitle = "title",
-                ParamNameForVacanciesWithSalary = "only_with_salary",
-                VacancyUrlNode = "//div[contains(@class, 'vacancy-info')]//a[@data-qa='serp-item__title']",
-                NextPageNode = "//a[@data-qa='pager-next']"
+                Rules = JsonSerializer.Serialize(new
+                {
+                    UrlWithVacancies = "https://hh.ru/search/vacancy",
+                    ParamNameForVacancyTitle = "title",
+                    ParamNameForVacanciesWithSalary = "only_with_salary",
+                    VacancyUrlNode = "//div[contains(@class, 'vacancy-info')]//a[@data-qa='serp-item__title']",
+                    NextPageNode = "//a[@data-qa='pager-next']"
+                })
             }
         );
     
@@ -44,12 +54,15 @@ public class ApplicationDbContext : DbContext
             new VacancyParseRule
             {
                 Id = vacancyParseRuleId,
-                CompanyNameNode = "//a[@data-qa='vacancy-company-name']/span/span",
-                NameNode = "//h1[@data-qa='vacancy-title']",
-                CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
-                DescriptionNode = "//div[@data-qa='vacancy-description']",
-                SalaryNode = "//span[@data-qa='vacancy-salary-compensation-type-net']",
-                CreationTimeNode = "//p[@class='vacancy-creation-time-redesigned']/span"
+                Rules = JsonSerializer.Serialize(new
+                {
+                    CompanyNameNode = "//a[@data-qa='vacancy-company-name']/span/span",
+                    NameNode = "//h1[@data-qa='vacancy-title']",
+                    CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
+                    DescriptionNode = "//div[@data-qa='vacancy-description']",
+                    SalaryNode = "//span[@data-qa='vacancy-salary-compensation-type-net']",
+                    CreationTimeNode = "//p[@class='vacancy-creation-time-redesigned']/span"
+                })
             }
         );
         

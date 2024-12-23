@@ -13,28 +13,7 @@ public class PageWithVacanciesParseRule
     public Guid Id { get; set; }
     
     /// <summary>
-    /// URL-адрес страницы с вакансиями
+    /// Правила парсинга страницы в формате json
     /// </summary>
-    [Required]
-    public String UrlWithVacancies { get; set; }
-
-    /// <summary>
-    /// Параметр запроса для нахождения заголовка вакансии
-    /// </summary>
-    public string ParamNameForVacancyTitle { get; set; }
-    
-    /// <summary>
-    /// Параметр запроса для нахождения вакансий только с зарплатой
-    /// </summary>
-    public string ParamNameForVacanciesWithSalary { get; set; }
-
-    /// <summary>
-    /// Нода для ссылки на вакансию
-    /// </summary>
-    public string VacancyUrlNode { get; set; }
-
-    /// <summary>
-    /// Нода для ссылки, которая перебрасывает на следующую страницу с вкансиями
-    /// </summary>
-    public string NextPageNode { get; set; }
+    public String Rules { get; set; }
 }

@@ -35,11 +35,17 @@ public class SiteParseRule
     [ForeignKey("VacancyParseRuleId")]
     public VacancyParseRule VacancyParseRule { get; set; }
     public Guid VacancyParseRuleId { get; set; }
-    
+
+    /// <summary>
+    /// Правила парсинга страницы со списком резюме
+    /// </summary>
     [ForeignKey("PageWithResumesParseRuleId")]
     public PageWithResumesParseRule PageWithResumesParseRule { get; set; }
     public Guid PageWithResumesParseRuleId { get; set; }
     
+    /// <summary>
+    /// Правила парсинга отдельного резюме
+    /// </summary>
     [ForeignKey("ResumeParseRuleId")]
     public ResumeParseRule ResumeParseRule { get; set; }
     public Guid ResumeParseRuleId { get; set; }
