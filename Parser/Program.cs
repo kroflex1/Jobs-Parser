@@ -11,7 +11,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Регистрация сервисов
-builder.Services.AddHttpClient<VacancyParserService>();
+builder.Services.AddHttpClient<VacanciesCollectorService>();
 builder.Services.AddSingleton<XlsxGeneratorService>();
 
 // Добавляем Swagger для документирования API

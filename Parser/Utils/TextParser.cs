@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Parser.Utils;
@@ -98,5 +99,12 @@ public  static class TextParser
         }
 
         return result;
+    }
+    
+    
+    public static JsonElement ParseStringToJsonElement(string jsonString)
+    {
+        using JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
+        return jsonDocument.RootElement.Clone(); // Клонируем JsonElement для возврата
     }
 }
