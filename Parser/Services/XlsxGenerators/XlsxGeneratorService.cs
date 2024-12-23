@@ -28,8 +28,6 @@ namespace Parser.Services.XlsxGenerators
             int cellNumber = 1;
             titleRow.Cell(cellNumber++).Value = "Компания";
             titleRow.Cell(cellNumber++).Value = "Название вакансии";
-            titleRow.Cell(cellNumber++).Value = "Роль";
-            titleRow.Cell(cellNumber++).Value = "Грейд вакансии";
             titleRow.Cell(cellNumber++).Value = "Город и удалёнка";
             titleRow.Cell(cellNumber++).Value = "Ссылка";
             titleRow.Cell(cellNumber++).Value = "Задача и функционал";
@@ -55,8 +53,6 @@ namespace Parser.Services.XlsxGenerators
                 int cellNumber = 1;
                 row.Cell(cellNumber++).Value = vacancy.CompanyName; //Компания
                 row.Cell(cellNumber++).Value = vacancy.Name; //Название вакансии
-                row.Cell(cellNumber++).Value = vacancy.Role; //Роль
-                row.Cell(cellNumber++).Value = vacancy.Grade; //Грейд вакансии
                 row.Cell(cellNumber++).Value = vacancy.City; //Город и удалёнка
                 row.Cell(cellNumber++).Value = vacancy.LinkToSource.ToString(); //Ссылка
                 row.Cell(cellNumber++).Value = vacancy.Functional; //Задача и функционал

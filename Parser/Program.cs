@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 // Регистрация сервисов
 builder.Services.AddHttpClient<VacanciesCollectorService>();
 builder.Services.AddSingleton<XlsxGeneratorService>();
+builder.Services.AddScoped<SiteParseRuleService>();
 
 // Добавляем Swagger для документирования API
 builder.Services.AddEndpointsApiExplorer();
@@ -30,7 +31,6 @@ builder.Services.AddSwaggerGen(options =>
     string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
-
 
 WebApplication app = builder.Build();
 
