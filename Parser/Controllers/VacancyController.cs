@@ -29,18 +29,20 @@ public class VacancyController : Controller
     /// </summary>
     /// <param name="vacanciesParameters">Параметры для поиска вакансий.</param>
     /// <returns>Файл XLSX с данными о вакансиях.</returns>
-    [HttpPost("parse")]
-    public async Task<IActionResult> ParseVacancies([FromBody] VacanciesParameters vacanciesParameters)
+    [HttpGet("parse")]
+    public async Task<IActionResult> ParseVacancies([FromQuery] string keyWords, [FromQuery] string regions)
     {
-        if (vacanciesParameters.keyWords == null || !vacanciesParameters.keyWords.Any())
+        if (keyWords == null || regions == null)
         {
             return BadRequest("Список ключевых слов не может быть пустым");
         }
 
+        HashSet<string> keyWordsList = keyWords.Split(',').ToHashSet();
+        HashSet<string> regionsList = regions.Split(',').Select(x => x.ToLower()).ToHashSet();
         try
         {
             List<SiteParseRule> parseRules = _siteParseRuleService.GetSiteParseRules();
-            List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, vacanciesParameters.keyWords, vacanciesParameters.regions);
+            List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList);
             byte[] fileBytes = _xlsxService.GenerateXlsx(vacancies);
             string fileName = $"Vacancies_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -50,12 +52,5 @@ public class VacancyController : Controller
             _logger.LogError(ex, "Ошибка при парсинге вакансий.");
             return StatusCode(500, "Внутренняя ошибка сервера.");
         }
-    }
-
-
-    public class VacanciesParameters
-    {
-        public List<String> keyWords { get; set; }
-        public List<String> regions { get; set; }
     }
 }

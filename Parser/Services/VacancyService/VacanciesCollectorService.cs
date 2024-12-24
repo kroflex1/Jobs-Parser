@@ -18,10 +18,11 @@ public class VacanciesCollectorService : IVacanciesCollector
         _vacancyUrlExtractors = new Dictionary<string, IVacancyUrlExtractor>
         {
             { "default", new DefaultVacancyUrlExtractor(httpClient) },
+            { "hh.ru", new HeadHunterUrlExtractor(httpClient) },
         };
     }
 
-    public List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, List<string> keyWords, List<string> regions)
+    public List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions)
     {
         List<Vacancy> result = new List<Vacancy>();
         foreach (SiteParseRule parseRule in siteParseRules)
@@ -33,8 +34,12 @@ public class VacanciesCollectorService : IVacanciesCollector
             List<Uri> linksToVacancies =
                 vacancyUrlExtractor.FindVacancyUrls(keyWords, regions, TextParser.ParseStringToJsonElement(parseRule.PageWithVacanciesParseRule.Rules));
             List<Vacancy> vacancies = linksToVacancies
-                .Select(link => vacancyParser.ParseVacancy(link, TextParser.ParseStringToJsonElement(parseRule.VacancyParseRule.Rules)))
-                .Where(IsValidVacancy)
+                .Select(link =>
+                {
+                    Thread.Sleep(1000);
+                    return vacancyParser.ParseVacancy(link, TextParser.ParseStringToJsonElement(parseRule.VacancyParseRule.Rules));
+                })
+                .Where(vacancy => IsValidVacancy(vacancy, regions))
                 .ToList();
             result.AddRange(vacancies);
         }
@@ -43,7 +48,7 @@ public class VacanciesCollectorService : IVacanciesCollector
     }
 
 
-    private Boolean IsValidVacancy(Vacancy vacancy)
+    private Boolean IsValidVacancy(Vacancy vacancy, HashSet<string> regions)
     {
         if (vacancy == null)
         {
