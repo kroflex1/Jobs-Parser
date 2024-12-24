@@ -4,5 +4,5 @@ namespace Parser.Services.VacancyParsers;
 
 public interface IVacancyUrlExtractor
 {
-    List<Uri> FindVacancyUrls(List<String> keyWords, List<String> regions, JsonElement pageWithVacanciesParseRule);
+    List<Uri> FindVacancyUrls(HashSet<String> keyWords, HashSet<String> regions, JsonElement pageWithVacanciesParseRule);
 }

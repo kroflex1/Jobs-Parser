@@ -2,10 +2,11 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace Parser.Utils;
 
-public  static class TextParser
+public static class TextParser
 {
     /// <summary>
     /// Извлекает два числа из строки. Если первое или второе число отсутствует, то возвращает 0 в качестве их значения.
@@ -25,16 +26,17 @@ public  static class TextParser
         {
             return Tuple.Create(0, 0);
         }
+
         if (matches.Count > 0)
         {
-            string value = matches[0].Value.Replace(" ", "");
-            firstNumber = int.Parse(value);
+            firstNumber = int.Parse(Regex.Replace(matches[0].Value, @"\s+", ""));
         }
+
         if (matches.Count > 1)
         {
-            string value = matches[1].Value.Replace(" ", "");
-            secondNumber = int.Parse(value);
+            secondNumber = int.Parse(Regex.Replace(matches[1].Value, @"\s+", ""));
         }
+
         return Tuple.Create(firstNumber, secondNumber);
     }
 
@@ -49,8 +51,9 @@ public  static class TextParser
         {
             return String.Empty;
         }
+
         StringBuilder xpathBuilder = new StringBuilder(".//*[");
-        
+
         for (int i = 0; i < keywords.Count; i++)
         {
             // Добавляем часть XPath для текущего ключевого слова
@@ -66,8 +69,8 @@ public  static class TextParser
         xpathBuilder.Append("]");
         return xpathBuilder.ToString();
     }
-    
-    
+
+
     /// <summary>
     /// Парсит дату.
     /// </summary>
@@ -102,11 +105,35 @@ public  static class TextParser
 
         return result;
     }
-    
-    
+
+
     public static JsonElement ParseStringToJsonElement(string jsonString)
     {
         using JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
         return jsonDocument.RootElement.Clone(); // Клонируем JsonElement для возврата
+    }
+
+    public static string GetTextWithoutChildren(HtmlNode node)
+    {
+        if (node == null)
+            return String.Empty;
+
+        // Получаем полный текст узла
+        string fullText = node.InnerText;
+
+        // Вычитаем текст всех дочерних узлов
+        foreach (var child in node.ChildNodes)
+        {
+            if (child.NodeType == HtmlNodeType.Text)
+                continue; // Пропускаем текстовые узлы самой ноды
+
+            string childText = child.InnerText;
+            if (!string.IsNullOrEmpty(childText))
+            {
+                fullText = fullText.Replace(childText, string.Empty);
+            }
+        }
+
+        return fullText.Trim();
     }
 }

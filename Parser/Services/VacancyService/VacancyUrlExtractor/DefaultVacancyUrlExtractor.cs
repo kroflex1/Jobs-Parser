@@ -14,36 +14,38 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         _httpClient = httpClient;
     }
 
-    public List<Uri> FindVacancyUrls(List<string> keyWords, List<string> regions, JsonElement pageWithVacanciesParseRule)
-    {
-        UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
-        NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
-        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] =
-            $"{string.Join(" ", keyWords)} {string.Join(" ", regions)}";
-        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "true";
-        startPageUrl.Query = parameters.ToString();
 
+    public List<Uri> FindVacancyUrls(HashSet<string> keyWords, HashSet<string> regions, JsonElement pageWithVacanciesParseRule)
+    {
+        Uri currentPageUrl = CreateLinkToStartPage(keyWords, regions, pageWithVacanciesParseRule);
         List<Uri> result = new List<Uri>();
-        string vacancyLinkNode = pageWithVacanciesParseRule.GetProperty("VacancyUrlNode").GetString();
-        string nextPageNode = pageWithVacanciesParseRule.GetProperty("NextPageNode").GetString();
-        Uri currentPageUrl = startPageUrl.Uri;
         while (currentPageUrl != null)
         {
-            List<Uri> vacancies = GetVacancyUrlsFromPage(currentPageUrl, vacancyLinkNode);
-            result.AddRange(vacancies);
-            currentPageUrl = GetNextPageWithVacanciesUrl(currentPageUrl, nextPageNode);
-        }
+            Thread.Sleep(1000);
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(_httpClient.GetStringAsync(currentPageUrl).Result);
 
+            List<Uri> vacancies = GetVacancyUrlsFromPage(htmlDoc, pageWithVacanciesParseRule, keyWords, regions);
+            result.AddRange(vacancies);
+            currentPageUrl = GetNextPageWithVacanciesUrl(currentPageUrl, htmlDoc, pageWithVacanciesParseRule, keyWords, regions);
+        }
         return result;
     }
 
-    protected virtual List<Uri> GetVacancyUrlsFromPage(Uri pageWithVacanciesUrl, string vacancyNodeLink)
+    protected virtual Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> regions, JsonElement pageWithVacanciesParseRule)
     {
-        string response = _httpClient.GetStringAsync(pageWithVacanciesUrl).Result;
-        HtmlDocument htmlDoc = new HtmlDocument();
-        htmlDoc.LoadHtml(response);
+        UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
+        NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
+        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] = string.Join(" ", keyWords);
+        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "true";
+        startPageUrl.Query = parameters.ToString();
+        return startPageUrl.Uri;
+    }
 
-        HtmlNodeCollection vacancyNodes = htmlDoc.DocumentNode.SelectNodes(vacancyNodeLink);
+    protected virtual List<Uri> GetVacancyUrlsFromPage(HtmlDocument htmlDocument, JsonElement pageWithVacanciesParseRule, HashSet<string> keyWords, HashSet<string> regions)
+    {
+        string vacancyLinkXPath = pageWithVacanciesParseRule.GetProperty("VacancyUrlNode").GetString();
+        HtmlNodeCollection vacancyNodes = htmlDocument.DocumentNode.SelectNodes(vacancyLinkXPath);
         List<Uri> vacanciesLinks = new List<Uri>();
 
         if (vacancyNodes != null)
@@ -61,13 +63,14 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         return vacanciesLinks;
     }
 
-    protected virtual Uri GetNextPageWithVacanciesUrl(Uri currentPageUrl, string nextPageNodeXpath)
+    protected virtual Uri GetNextPageWithVacanciesUrl(Uri currentPageUrl, HtmlDocument htmlDocument, JsonElement pageWithVacanciesParseRule, HashSet<string> keyWords, HashSet<string> regions)
     {
         string response = _httpClient.GetStringAsync(currentPageUrl).Result;
         HtmlDocument htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(response);
 
-        HtmlNode nextPageNode = htmlDoc.DocumentNode.SelectSingleNode(nextPageNodeXpath);
+        string nextPageXpath = pageWithVacanciesParseRule.GetProperty("NextPageNode").GetString();
+        HtmlNode nextPageNode = htmlDoc.DocumentNode.SelectSingleNode(nextPageXpath);
         if (nextPageNode != null)
         {
             string nextPageUrl = nextPageNode.GetAttributeValue("href", string.Empty);
@@ -82,6 +85,7 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
                 return new Uri(baseUri, nextPageUrl);
             }
         }
+
         return null;
     }
 }
