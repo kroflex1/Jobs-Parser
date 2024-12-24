@@ -42,8 +42,9 @@ public class ApplicationDbContext : DbContext
                 Rules = JsonSerializer.Serialize(new
                 {
                     UrlWithVacancies = "https://hh.ru/search/vacancy",
-                    ParamNameForVacancyTitle = "title",
+                    ParamNameForVacancyTitle = "text",
                     ParamNameForVacanciesWithSalary = "only_with_salary",
+                    ParamNameForRegion = "area",
                     VacancyUrlNode = "//div[contains(@class, 'vacancy-info')]//a[@data-qa='serp-item__title']",
                     NextPageNode = "//a[@data-qa='pager-next']"
                 })
