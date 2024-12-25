@@ -34,7 +34,7 @@ public class HeadHunterVacancyParser : DefaultVacancyParser
     }
 
 
-    protected virtual string GetRequirements(HtmlDocument htmlDocument, JsonElement parseRules)
+    protected override string GetRequirements(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         string vacancyDescriptionXPath;
         try
@@ -56,7 +56,7 @@ public class HeadHunterVacancyParser : DefaultVacancyParser
         return GetMainTextAfterTitle(vacancyDescriptionNode, XPathForRequirementTitle);
     }
 
-    protected virtual string GetConditions(HtmlDocument htmlDocument, JsonElement parseRules)
+    protected override string GetConditions(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         string vacancyDescriptionXPath;
         try
@@ -86,8 +86,11 @@ public class HeadHunterVacancyParser : DefaultVacancyParser
         StringBuilder resultText = new StringBuilder();
         if (titleNode != null)
         {
-            // Поиск следующего узла, будь то текст или список
-            HtmlNode nextNode = vacancyDescriptionNode.ParentNode.ParentNode.SelectSingleNode("following-sibling::node()[1]");
+            HtmlNode nextNode = titleNode.ParentNode.NextSibling;
+            while (nextNode != null && nextNode.NodeType != HtmlNodeType.Element)
+            {
+                nextNode = nextNode.NextSibling;
+            }
             if (nextNode != null)
             {
                 // Если узел является списком <ul>

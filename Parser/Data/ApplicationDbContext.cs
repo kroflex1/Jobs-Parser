@@ -57,7 +57,7 @@ public class ApplicationDbContext : DbContext
                 Id = vacancyParseRuleId,
                 Rules = JsonSerializer.Serialize(new
                 {
-                    CompanyNameNode = "//a[@data-qa='vacancy-company-name']/span/span",
+                    CompanyNameNode = "//a[@data-qa='vacancy-company-name']/span",
                     NameNode = "//h1[@data-qa='vacancy-title']",
                     CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
                     DescriptionNode = "//div[@data-qa='vacancy-description']",

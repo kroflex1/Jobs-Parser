@@ -155,7 +155,17 @@ public class DefaultVacancyParser : IVacancyParser
         }
 
         HtmlNode cityNode = htmlDocument.DocumentNode.SelectSingleNode(cityXPath);
-        return cityNode?.InnerText.Trim() ?? string.Empty;
+        if (cityNode == null)
+        {
+            return String.Empty;
+        }
+        List<string> parts = cityNode.InnerText.Split(',').ToList();
+        if (parts.Count == 0)
+        {
+            return cityNode.InnerText.Trim();
+        }
+
+        return parts[0].Trim();
     }
 
     protected virtual Uri GetLinkToSource(HtmlDocument htmlDocument, JsonElement parseRules, Uri linkToVacancy)
@@ -210,7 +220,7 @@ public class DefaultVacancyParser : IVacancyParser
         StringBuilder result = new StringBuilder();
         foreach (Match match in matches)
         {
-            result.Append(match.Value).Append("\n");
+            result.Append(match.Value).Append('\n');
         }
 
         if (result.Length > 0)

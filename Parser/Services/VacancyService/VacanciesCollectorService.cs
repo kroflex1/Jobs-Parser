@@ -65,6 +65,11 @@ public class VacanciesCollectorService : IVacanciesCollector
             return false;
         }
 
+        if (vacancy.City == null || vacancy.City.Length == 0)
+        {
+            return false;
+        }
+
         return true;
     }
 }
