@@ -45,10 +45,7 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
