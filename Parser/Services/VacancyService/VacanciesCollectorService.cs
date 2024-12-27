@@ -22,7 +22,7 @@ public class VacanciesCollectorService : IVacanciesCollector
         };
     }
 
-    public List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions)
+    public List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions, int publicationAtMonth)
     {
         List<Vacancy> result = new List<Vacancy>();
         foreach (SiteParseRule parseRule in siteParseRules)
@@ -47,7 +47,7 @@ public class VacanciesCollectorService : IVacanciesCollector
                         return null;
                     }
                 })
-                .Where(vacancy => IsValidVacancy(vacancy, regions))
+                .Where(vacancy => IsValidVacancy(vacancy, regions, publicationAtMonth))
                 .ToList();
             result.AddRange(vacancies);
         }
@@ -56,7 +56,7 @@ public class VacanciesCollectorService : IVacanciesCollector
     }
 
 
-    private Boolean IsValidVacancy(Vacancy vacancy, HashSet<string> regions)
+    private Boolean IsValidVacancy(Vacancy vacancy, HashSet<string> regions, int publicationAtMonth)
     {
         if (vacancy == null)
         {
@@ -74,6 +74,11 @@ public class VacanciesCollectorService : IVacanciesCollector
         }
 
         if (vacancy.City == null || vacancy.City.Length == 0)
+        {
+            return false;
+        }
+
+        if (vacancy.CreationTime < DateTime.Now.AddMonths(-3))
         {
             return false;
         }

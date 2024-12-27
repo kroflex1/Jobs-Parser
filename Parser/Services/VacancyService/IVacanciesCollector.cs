@@ -4,5 +4,5 @@ namespace Parser.Services.VacancyParsers;
 
 public interface IVacanciesCollector
 {
-    List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions);
+    List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions, int publicationAtMonth);
 }

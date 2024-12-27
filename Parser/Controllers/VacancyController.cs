@@ -25,16 +25,22 @@ public class VacancyController : Controller
     }
 
     /// <summary>
-    /// Парсит вакансии с указанного URL и возвращает файл XLSX с результатами.
+    /// Парсит вакансии и возвращает файл XLSX с результатами.
     /// </summary>
-    /// <param name="vacanciesParameters">Параметры для поиска вакансий.</param>
+    /// <param name="keyWords">Ключевые слова, которые должна содержать вакансия.</param>
+    /// <param name="regions">Регионы, в котором ищем вакансию.</param>
+    /// <param name="publicationAtMonth">Насколько давно была опубликована вакансия, 1 месяц назад, 2 месяца назад и т.д..</param>
     /// <returns>Файл XLSX с данными о вакансиях.</returns>
     [HttpGet("parse")]
-    public async Task<IActionResult> ParseVacancies([FromQuery] string keyWords, [FromQuery] string regions)
+    public async Task<IActionResult> ParseVacancies([FromQuery] string keyWords, [FromQuery] string regions, [FromQuery] int publicationAtMonth)
     {
         if (keyWords == null || regions == null)
         {
             return BadRequest("Список ключевых слов не может быть пустым");
+        }
+        if (publicationAtMonth <= 0)
+        {
+            return BadRequest("Количество месяцев не модет быть меньше нуля");
         }
 
         HashSet<string> keyWordsList = keyWords.Split(',').ToHashSet();
@@ -42,7 +48,7 @@ public class VacancyController : Controller
         try
         {
             List<SiteParseRule> parseRules = _siteParseRuleService.GetSiteParseRules();
-            List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList);
+            List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList, publicationAtMonth);
             byte[] fileBytes = _xlsxService.GenerateXlsx(vacancies);
             string fileName = $"Vacancies_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
