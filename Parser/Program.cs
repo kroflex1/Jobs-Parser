@@ -4,6 +4,7 @@ using Parser.Data;
 using Parser.Services;
 using Parser.Services.VacancyParsers;
 using Parser.Services.XlsxGenerators;
+using Products.Api.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(xmlPath);
 });
 
+
+
 WebApplication app = builder.Build();
 
 // Настройка Swagger в режиме разработки
@@ -39,9 +42,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
