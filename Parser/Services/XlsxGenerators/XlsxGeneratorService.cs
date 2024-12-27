@@ -12,7 +12,7 @@ namespace Parser.Services.XlsxGenerators
                 IXLWorksheet worksheet = workbook.Worksheets.Add(sheetName);
                 prepareTitle(worksheet);
                 fillData(worksheet, vacancies);
-                worksheet.Columns().AdjustToContents();
+                ApplyStyle(worksheet);
 
                 using (var stream = new MemoryStream())
                 {
@@ -32,8 +32,8 @@ namespace Parser.Services.XlsxGenerators
             titleRow.Cell(cellNumber++).Value = "Ссылка";
             titleRow.Cell(cellNumber++).Value = "Задача и функционал";
             titleRow.Cell(cellNumber++).Value = "Требования";
-            titleRow.Cell(cellNumber++).Value = "Ключевые навыки";
             titleRow.Cell(cellNumber++).Value = "Условия";
+            titleRow.Cell(cellNumber++).Value = "Ключевые навыки";
             titleRow.Cell(cellNumber++).Value = "ЗП от";
             titleRow.Cell(cellNumber++).Value = "ЗП до";
             titleRow.Cell(cellNumber++).Value = "Результирующий уровень ЗП";
@@ -41,7 +41,7 @@ namespace Parser.Services.XlsxGenerators
             IXLRange headerRange = worksheet.Range(1, 1, 1, --cellNumber);
             headerRange.SetAutoFilter();
             headerRange.Style.Font.Bold = true;
-            headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+            headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
         }
 
         private void fillData(IXLWorksheet worksheet, List<Vacancy> vacancies)
@@ -54,15 +54,29 @@ namespace Parser.Services.XlsxGenerators
                 row.Cell(cellNumber++).Value = vacancy.CompanyName; //Компания
                 row.Cell(cellNumber++).Value = vacancy.Name; //Название вакансии
                 row.Cell(cellNumber++).Value = vacancy.City; //Город и удалёнка
-                row.Cell(cellNumber++).Value = vacancy.LinkToSource.ToString(); //Ссылка
+                row.Cell(cellNumber).Value = vacancy.LinkToSource.ToString(); //Ссылка
+                row.Cell(cellNumber++).SetHyperlink(new XLHyperlink(vacancy.LinkToSource.ToString()));
                 row.Cell(cellNumber++).Value = vacancy.Functional; //Задача и функционал
                 row.Cell(cellNumber++).Value = vacancy.Requirements; //Требования
-                row.Cell(cellNumber++).Value = vacancy.KeySkills; //Ключевые навыки
                 row.Cell(cellNumber++).Value = vacancy.Conditions; //Условия
+                row.Cell(cellNumber++).Value = vacancy.KeySkills; //Ключевые навыки
                 row.Cell(cellNumber++).Value = vacancy.SalaryFrom; //ЗП от
-                row.Cell(cellNumber++).Value = vacancy.SalaryTo; //ЗП до
-                row.Cell(cellNumber).Value = (vacancy.SalaryFrom + vacancy.SalaryTo) / 2.0; //Результирующий уровень ЗП
+                row.Cell(cellNumber++).Value = vacancy.SalaryTo == null || vacancy.SalaryTo == 0 ? "-" : vacancy.SalaryTo; //ЗП до
+                row.Cell(cellNumber).Value = vacancy.getAverageSalaryValue(); //Результирующий уровень ЗП
             }
+        }
+
+        private void ApplyStyle(IXLWorksheet worksheet)
+        {
+            // Включаем перенос текста для всех ячеек
+            worksheet.Style.Alignment.WrapText = true;
+            // Устанавливаем фиксированную ширину для всех строк
+            worksheet.Columns().Width = 20;
+            // Устанавливаем фиксированную высоту для всех строк
+            worksheet.Rows().Height = 30;
+            // Выравниваем значения
+            // Применяем выравнивание ко всем ячейкам
+            worksheet.Cells().Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
         }
     }
 }
