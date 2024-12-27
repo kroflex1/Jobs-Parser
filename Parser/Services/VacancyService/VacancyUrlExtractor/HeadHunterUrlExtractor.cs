@@ -29,7 +29,7 @@ public class HeadHunterUrlExtractor : DefaultVacancyUrlExtractor
     {
         UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
         NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
-        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] = string.Join(" ", keyWords);
+        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] = string.Join(" or ", keyWords);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "true";
         foreach (string region in regions)
         {

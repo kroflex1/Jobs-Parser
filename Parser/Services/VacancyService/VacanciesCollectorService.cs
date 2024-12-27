@@ -36,8 +36,16 @@ public class VacanciesCollectorService : IVacanciesCollector
             List<Vacancy> vacancies = linksToVacancies
                 .Select(link =>
                 {
-                    Thread.Sleep(1000);
-                    return vacancyParser.ParseVacancy(link, TextParser.ParseStringToJsonElement(parseRule.VacancyParseRule.Rules));
+                    try
+                    {
+                        Thread.Sleep(200);
+                        return vacancyParser.ParseVacancy(link, TextParser.ParseStringToJsonElement(parseRule.VacancyParseRule.Rules));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("ЧТо-то пошли не так", ex.Message);
+                        return null;
+                    }
                 })
                 .Where(vacancy => IsValidVacancy(vacancy, regions))
                 .ToList();

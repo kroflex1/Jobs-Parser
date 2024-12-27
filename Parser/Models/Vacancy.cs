@@ -61,12 +61,12 @@
         {
             double sum = 0;
             int amount = 0;
-            if (SalaryFrom != null)
+            if (SalaryFrom != null && SalaryFrom != 0)
             {
                 sum += (int)SalaryFrom;
                 amount++;
             }
-            if (SalaryTo != null)
+            if (SalaryTo != null && SalaryTo != 0)
             {
                 sum += (int)SalaryTo;
                 amount++;

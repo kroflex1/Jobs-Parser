@@ -32,7 +32,8 @@ public class DefaultVacancyParser : IVacancyParser
             "Какие задачи ждут тебя",
             "Задачи",
             "Над чем предстоит работать",
-            "Что будет представлять из себя стажировка?"
+            "Что будет представлять из себя стажировка?",
+            "Как мы работаем"
         ]);
         XPathForRequirementTitle = TextParser.CreateXPathForNodeWithText([
             "Мы ожидаем",
@@ -53,13 +54,19 @@ public class DefaultVacancyParser : IVacancyParser
             "Мы ожидаем от кандидата",
             "Чтобы справляться с задачами нужны",
             "Нам нужен человек, который",
-            "Для нас важно"
+            "Для нас важно",
+            "Требуемая квалификация",
+            "Мы будем рады видеть тебя в нашей команде, если ты имеешь",
+            "Наш стэк"
+
         ]);
         XPathForConditionTitle = TextParser.CreateXPathForNodeWithText([
             "Условия",
             "Условия стажировки",
             "Условия работы",
-            "С нами вам откроется возможность получить"
+            "С нами вам откроется возможность получить",
+            "Как будет построена твоя работа",
+            "Почему у нас классно работать"
         ]);
     }
 
@@ -68,11 +75,29 @@ public class DefaultVacancyParser : IVacancyParser
         // Создаем HttpRequestMessage для отправки GET-запроса
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, linkToVacancy);
 
-        // Выполняем синхронный запрос
-        HttpResponseMessage response = _httpClient.Send(request);
-        if (!response.IsSuccessStatusCode)
+        HttpResponseMessage response;
+        using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
         {
-            return null;
+            try
+            {
+                response = _httpClient.Send(request, cts.Token);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Обработка ситуации, если запрос прерван
+                Console.WriteLine($"Запрос {linkToVacancy.ToString()} прерван из-за превышения времени ожидания.");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // Обработка других ошибок
+                Console.WriteLine($"Ошибка: {ex.Message}");
+                return null;
+            }
         }
 
         // Получаем HTML-контент страницы
