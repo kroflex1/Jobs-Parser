@@ -9,12 +9,8 @@ public class PageWithResumesParseRule
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    [Required]
-    public string UrlWithResumes { get; set; }
-    
-    public string ParamNameForResumeTitle { get; set; }
-    
-    public string ResumeUrlNode { get; set; }
-    
-    public string NextPageNode { get; set; }
+    /// <summary>
+    /// Правила парсинга страницы в формате json
+    /// </summary>
+    public String Rules { get; set; }
 }

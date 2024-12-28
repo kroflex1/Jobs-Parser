@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Parser.Data;
+using Parser.DTO;
 using Parser.Models;
 using Parser.Services;
 
@@ -9,11 +11,11 @@ namespace Parser.Controllers;
 [Route("api/[controller]")]
 public class ParseRulesController : ControllerBase
 {
-    private readonly IParseRulesService _parseRulesService;
+    private readonly ISiteParseRulesService _siteParseRulesService;
 
-    public ParseRulesController(IParseRulesService parseRulesService)
+    public ParseRulesController(ISiteParseRulesService siteParseRulesService)
     {
-        _parseRulesService = parseRulesService;
+        _siteParseRulesService = siteParseRulesService;
     }
 
     /// <summary>
@@ -25,10 +27,11 @@ public class ParseRulesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<List<SiteParseRule>>> GetAllParseRules()
+    public async Task<ActionResult<List<SiteParseRuleDTO>>> GetAllParseRules()
     {
-        List<SiteParseRule> sites = await _parseRulesService.GetAllParseRules();
-        return Ok(sites);
+        List<SiteParseRule> sites = await _siteParseRulesService.GetAllSiteParseRules();
+        
+        return Ok(sites.Select(convertEntityToDTO).ToList());
     }
 
     /// <summary>
@@ -41,38 +44,46 @@ public class ParseRulesController : ControllerBase
     [HttpGet("{id:length(24)}", Name = "GetSiteParseRuleById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<SiteParseRule>> GetSiteParseRuleById(Guid id)
+    public async Task<ActionResult<SiteParseRuleDTO>> GetSiteParseRuleById(Guid id)
     {
-        SiteParseRule siteParseRule = await _parseRulesService.GetParseRuleById(id);
-        if (siteParseRule == null)
-        {
-            return NotFound();
-        }
+        SiteParseRule siteParseRule = await _siteParseRulesService.GetSiteParseRuleById(id);
 
-        return Ok(siteParseRule);
+        return Ok(convertEntityToDTO(siteParseRule));
     }
 
     /// <summary>
     /// Обновляет настройки парсинга сайта по его id.
     /// </summary>
-    /// <param name="id">Id настройки парсинга.</param>
     /// <param name="updatedSiteParseRules">Новые настройки парсинга для сайта.</param>
     /// <returns>Результат операции обновления.</returns>
     /// <response code="204">Настройки успешно обновлены.</response>
     /// <response code="404">Если настройка парсинга с указанным идентификатором не найдена.</response>
-    [HttpPatch("{id:length(24)}")]
+    [HttpPatch]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateSiteParseRule(Guid id, [FromBody] SiteParseRule updatedSiteParseRules)
+    public async Task<IActionResult> UpdateSiteParseRule([FromBody] SiteParseRuleDTO updatedSiteParseRules)
     {
         try
         {
-            await _parseRulesService.UpdateParseRule(id, updatedSiteParseRules);
+            await _siteParseRulesService.UpdateSiteParseRule(updatedSiteParseRules);
             return NoContent();
         }
         catch (KeyNotFoundException)
         {
             return NotFound();
         }
+    }
+
+    private SiteParseRuleDTO convertEntityToDTO(SiteParseRule siteParseRule)
+    {
+        return new SiteParseRuleDTO
+        {
+            Id = siteParseRule.Id,
+            SiteName = siteParseRule.SiteName,
+            PageWithVacanciesParseRule = JsonSerializer.Deserialize<JsonElement>(siteParseRule.PageWithVacanciesParseRule.Rules),
+            VacancyParseRule = JsonSerializer.Deserialize<JsonElement>(siteParseRule.VacancyParseRule.Rules),
+            PageWithResumesParseRule = JsonSerializer.Deserialize<JsonElement>(siteParseRule.PageWithResumesParseRule.Rules),
+            ResumeParseRule = JsonSerializer.Deserialize<JsonElement>(siteParseRule.ResumeParseRule.Rules)
+        };
     }
 }

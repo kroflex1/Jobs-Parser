@@ -15,7 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<VacancyParseRule> VacancyParseRules { get; set; }
     public DbSet<PageWithResumesParseRule> PageWithResumesParseRules { get; set; }
     public DbSet<ResumeParseRule> ResumeParseRule { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -25,16 +25,22 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<VacancyParseRule>()
             .Property(e => e.Rules)
             .HasColumnType("jsonb");
+        modelBuilder.Entity<PageWithResumesParseRule>()
+            .Property(e => e.Rules)
+            .HasColumnType("jsonb");
+        modelBuilder.Entity<ResumeParseRule>()
+            .Property(e => e.Rules)
+            .HasColumnType("jsonb");
         fillWithDefaultValues(modelBuilder);
     }
-    
+
     private void fillWithDefaultValues(ModelBuilder modelBuilder)
     {
         Guid pageWithVacanciesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         Guid vacancyParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         Guid pageWithResumesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000003");
         Guid resumeParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000004");
-        
+
         modelBuilder.Entity<PageWithVacanciesParseRule>().HasData(
             new PageWithVacanciesParseRule
             {
@@ -50,7 +56,7 @@ public class ApplicationDbContext : DbContext
                 })
             }
         );
-    
+
         modelBuilder.Entity<VacancyParseRule>().HasData(
             new VacancyParseRule
             {
@@ -66,34 +72,40 @@ public class ApplicationDbContext : DbContext
                 })
             }
         );
-        
+
         modelBuilder.Entity<PageWithResumesParseRule>().HasData(
             new PageWithResumesParseRule
             {
                 Id = pageWithResumesParseRuleId,
-                UrlWithResumes = "-",
-                ParamNameForResumeTitle = "-",
-                ResumeUrlNode = "-",
-                NextPageNode = "-",
+                Rules = JsonSerializer.Serialize(new
+                {
+                    UrlWithResumes = "",
+                    ParamNameForResumeTitle = "",
+                    ResumeUrlNode = "",
+                    NextPageNode = "",
+                })
             }
         );
-        
-            
+
+
         modelBuilder.Entity<ResumeParseRule>().HasData(
             new ResumeParseRule
             {
                 Id = resumeParseRuleId,
-                FullNameNode = "-",
-                RoleNode = "-",
-                ContactsNode = "-",
-                CityNode = "-"
+                Rules = JsonSerializer.Serialize(new
+                {
+                    FullNameNode = "",
+                    RoleNode = "",
+                    ContactsNode = "",
+                    CityNode = "",
+                })
             }
         );
-    
+
         modelBuilder.Entity<SiteParseRule>().HasData(
             new SiteParseRule
             {
-                Id =  Guid.Parse("00000000-0000-0000-0000-000000000005"),
+                Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
                 SiteName = "hh.ru",
                 PageWithVacanciesParseRuleId = pageWithVacanciesParseRuleId,
                 VacancyParseRuleId = vacancyParseRuleId,

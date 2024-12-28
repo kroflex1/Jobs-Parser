@@ -9,11 +9,8 @@ public class ResumeParseRule
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     
-    public string FullNameNode { get; set; }
-    
-    public string RoleNode { get; set; }
-    
-    public string ContactsNode { get; set; }
-    
-    public string CityNode { get; set; }
+    /// <summary>
+    /// Правила парсинга страницы в формате json
+    /// </summary>
+    public String Rules { get; set; }
 }
