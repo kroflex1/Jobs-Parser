@@ -94,10 +94,12 @@ public class ApplicationDbContext : DbContext
                 Id = resumeParseRuleId,
                 Rules = JsonSerializer.Serialize(new
                 {
-                    FullNameNode = "",
-                    RoleNode = "",
-                    ContactsNode = "",
-                    CityNode = "",
+                    RoleNode = "//span[@class='resume-block__title-text']",
+                    PhoneContactNode = "//div[@data-qa='resume-contacts-phone']/a",
+                    EmailContactNode = "//div[@data-qa='resume-contact-email']",
+                    PersonalContactNode = "//div[@data-qa='resume-personalsite-personal']/a",
+                    SalaryNode = "//span[@class='resume-block__salary']",
+                    CityNode = "//span[@class='resume-personal-address']"
                 })
             }
         );
