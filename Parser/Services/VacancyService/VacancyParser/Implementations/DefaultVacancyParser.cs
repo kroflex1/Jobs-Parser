@@ -287,9 +287,9 @@ public class DefaultVacancyParser : IVacancyParser
             return null;
         }
 
-        HtmlNode cityNode = htmlDocument.DocumentNode.SelectSingleNode(salaryXPath);
-        if (cityNode != null)
-            return TextParser.ExtractNumbers(cityNode.InnerText.Trim()).Item1;
+        HtmlNode salaryNode = htmlDocument.DocumentNode.SelectSingleNode(salaryXPath);
+        if (salaryNode != null)
+            return TextParser.ExtractNumbers(salaryNode.InnerText.Trim()).Item1;
         return null;
     }
 
@@ -305,9 +305,9 @@ public class DefaultVacancyParser : IVacancyParser
             return null;
         }
 
-        HtmlNode cityNode = htmlDocument.DocumentNode.SelectSingleNode(salaryXPath);
-        if (cityNode != null)
-            return TextParser.ExtractNumbers(cityNode.InnerText.Trim()).Item2;
+        HtmlNode salaryNode = htmlDocument.DocumentNode.SelectSingleNode(salaryXPath);
+        if (salaryNode != null)
+            return TextParser.ExtractNumbers(salaryNode.InnerText.Trim()).Item2;
         return null;
     }
 
