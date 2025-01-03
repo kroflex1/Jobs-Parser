@@ -13,7 +13,7 @@ builder.Services.AddControllers();
 
 // Регистрация сервисов
 builder.Services.AddHttpClient<VacanciesCollectorService>();
-builder.Services.AddSingleton<XlsxGeneratorService>();
+builder.Services.AddSingleton<XlsxVacancyGeneratorService>();
 builder.Services.AddScoped<SiteParseRulesService>();
 
 // Добавляем Swagger для документирования API

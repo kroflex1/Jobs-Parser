@@ -11,15 +11,15 @@ namespace Parser.Controllers;
 public class VacancyController : Controller
 {
     private readonly VacanciesCollectorService _vacanciesCollectorService;
-    private readonly XlsxGeneratorService _xlsxService;
+    private readonly XlsxVacancyGeneratorService _xlsxVacancyService;
     private readonly SiteParseRulesService _siteParseRuleService;
     private readonly ILogger<VacancyController> _logger;
 
-    public VacancyController(VacanciesCollectorService vacanciesCollectorService, XlsxGeneratorService xlsxService, ILogger<VacancyController> logger,
+    public VacancyController(VacanciesCollectorService vacanciesCollectorService, XlsxVacancyGeneratorService xlsxVacancyService, ILogger<VacancyController> logger,
         SiteParseRulesService siteParseRuleService)
     {
         _vacanciesCollectorService = vacanciesCollectorService;
-        _xlsxService = xlsxService;
+        _xlsxVacancyService = xlsxVacancyService;
         _siteParseRuleService = siteParseRuleService;
         _logger = logger;
     }
@@ -49,7 +49,7 @@ public class VacancyController : Controller
         {
             List<SiteParseRule> parseRules = await _siteParseRuleService.GetAllSiteParseRules();
             List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList, publicationAtMonth);
-            byte[] fileBytes = _xlsxService.GenerateXlsx(vacancies);
+            byte[] fileBytes = _xlsxVacancyService.GenerateXlsx(vacancies);
             string fileName = $"Vacancies_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
