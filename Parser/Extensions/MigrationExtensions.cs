@@ -8,10 +8,21 @@ public static class MigrationExtensions
     public static void ApplyMigrations(this IApplicationBuilder app)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
-
+        
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        dbContext.Database.Migrate();
+        
+        // Проверяем, есть ли неподтверждённые миграции
+        var pendingMigrations = dbContext.Database.GetPendingMigrations();
+        
+        if (pendingMigrations.Any())
+        {
+            Console.WriteLine("Применяются новые миграции...");
+            dbContext.Database.Migrate();
+        }
+        else
+        {
+            Console.WriteLine("Миграции не требуются.");
+        }
     }
 }

@@ -11,11 +11,11 @@ namespace Parser.Controllers;
 [Route("api/[controller]")]
 public class ParseRulesController : ControllerBase
 {
-    private readonly ISiteParseRulesService _siteParseRulesService;
+    private readonly ISiteParseRulesRepository _siteParseRulesRepository;
 
-    public ParseRulesController(ISiteParseRulesService siteParseRulesService)
+    public ParseRulesController(ISiteParseRulesRepository siteParseRulesRepository)
     {
-        _siteParseRulesService = siteParseRulesService;
+        _siteParseRulesRepository = siteParseRulesRepository;
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ public class ParseRulesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<List<SiteParseRuleDTO>>> GetAllParseRules()
     {
-        List<SiteParseRule> sites = await _siteParseRulesService.GetAllSiteParseRules();
+        List<SiteParseRule> sites = await _siteParseRulesRepository.GetAllSiteParseRules();
         
         return Ok(sites.Select(convertEntityToDTO).ToList());
     }
@@ -46,7 +46,7 @@ public class ParseRulesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SiteParseRuleDTO>> GetSiteParseRuleById(Guid id)
     {
-        SiteParseRule siteParseRule = await _siteParseRulesService.GetSiteParseRuleById(id);
+        SiteParseRule siteParseRule = await _siteParseRulesRepository.GetSiteParseRuleById(id);
 
         return Ok(convertEntityToDTO(siteParseRule));
     }
@@ -65,7 +65,7 @@ public class ParseRulesController : ControllerBase
     {
         try
         {
-            await _siteParseRulesService.UpdateSiteParseRule(updatedSiteParseRules);
+            await _siteParseRulesRepository.UpdateSiteParseRule(updatedSiteParseRules);
             return NoContent();
         }
         catch (KeyNotFoundException)

@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 // Регистрация сервисов
 builder.Services.AddHttpClient<VacanciesCollectorService>();
 builder.Services.AddSingleton<XlsxVacancyGeneratorService>();
-builder.Services.AddScoped<SiteParseRulesService>();
+builder.Services.AddScoped<SiteParseRulesRepository>();
 
 // Добавляем Swagger для документирования API
 builder.Services.AddEndpointsApiExplorer();
@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 // Добавляем DbContext с использованием PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
-builder.Services.AddScoped<ISiteParseRulesService, SiteParseRulesService>();
+builder.Services.AddScoped<ISiteParseRulesRepository, SiteParseRulesRepository>();
 
 // Добавьте Swagger и подключите XML-документацию
 builder.Services.AddSwaggerGen(options =>
@@ -37,13 +37,10 @@ builder.Services.AddSwaggerGen(options =>
 
 WebApplication app = builder.Build();
 
-// Настройка Swagger в режиме разработки
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.ApplyMigrations();
-}
+// Настройка Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+app.ApplyMigrations();
 
 app.UseHttpsRedirection();
 
