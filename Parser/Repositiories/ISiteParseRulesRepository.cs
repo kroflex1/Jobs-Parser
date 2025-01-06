@@ -3,7 +3,7 @@ using Parser.Models;
 
 namespace Parser.Services;
 
-public interface ISiteParseRulesService
+public interface ISiteParseRulesRepository
 {
     Task<List<SiteParseRule>> GetAllSiteParseRules();
     Task<SiteParseRule> GetSiteParseRuleById(Guid id);

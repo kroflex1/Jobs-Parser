@@ -5,11 +5,11 @@ using Parser.Models;
 
 namespace Parser.Services;
 
-public class SiteParseRulesService : ISiteParseRulesService
+public class SiteParseRulesRepository : ISiteParseRulesRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public SiteParseRulesService(ApplicationDbContext dbContext)
+    public SiteParseRulesRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
