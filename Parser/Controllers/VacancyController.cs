@@ -12,15 +12,15 @@ public class VacancyController : Controller
 {
     private readonly VacanciesCollectorService _vacanciesCollectorService;
     private readonly XlsxVacancyGeneratorService _xlsxVacancyService;
-    private readonly SiteParseRulesService _siteParseRuleService;
+    private readonly SiteParseRulesRepository _siteParseRuleRepository;
     private readonly ILogger<VacancyController> _logger;
 
     public VacancyController(VacanciesCollectorService vacanciesCollectorService, XlsxVacancyGeneratorService xlsxVacancyService, ILogger<VacancyController> logger,
-        SiteParseRulesService siteParseRuleService)
+        SiteParseRulesRepository siteParseRuleRepository)
     {
         _vacanciesCollectorService = vacanciesCollectorService;
         _xlsxVacancyService = xlsxVacancyService;
-        _siteParseRuleService = siteParseRuleService;
+        _siteParseRuleRepository = siteParseRuleRepository;
         _logger = logger;
     }
 
@@ -47,7 +47,7 @@ public class VacancyController : Controller
         HashSet<string> regionsList = regions.Split(',').Select(x => x.ToLower()).ToHashSet();
         try
         {
-            List<SiteParseRule> parseRules = await _siteParseRuleService.GetAllSiteParseRules();
+            List<SiteParseRule> parseRules = await _siteParseRuleRepository.GetAllSiteParseRules();
             List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList, publicationAtMonth);
             byte[] fileBytes = _xlsxVacancyService.GenerateXlsx(vacancies);
             string fileName = $"Vacancies_{DateTime.Now:yyyyMMddHHmmss}.xlsx";

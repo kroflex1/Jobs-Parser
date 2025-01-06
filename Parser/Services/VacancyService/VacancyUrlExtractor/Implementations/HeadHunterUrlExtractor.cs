@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 using HtmlAgilityPack;
@@ -25,18 +26,27 @@ public class HeadHunterUrlExtractor : DefaultVacancyUrlExtractor
         }
     }
     
-    protected override Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> regions, JsonElement pageWithVacanciesParseRule)
+    protected override Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> places, JsonElement pageWithVacanciesParseRule)
     {
         UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
         NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] = string.Join(" or ", keyWords);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "true";
-        foreach (string region in regions)
+        StringBuilder parametersForPlaces = new StringBuilder("&");
+        foreach (string region in places)
         {
-            parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForRegion").GetString()] = _areasMap[region.ToLower()].ToString();
+            if (_areasMap.ContainsKey(region.ToLower()))
+            {
+                parametersForPlaces
+                    .Append(pageWithVacanciesParseRule.GetProperty("ParamNameForRegion").GetString())
+                    .Append("=")
+                    .Append(_areasMap[region.ToLower()].ToString())
+                    .Append("&");
+            }
         }
 
-        startPageUrl.Query = parameters.ToString();
+        parametersForPlaces.Remove(parametersForPlaces.Length - 1, 1);
+        startPageUrl.Query = parameters.ToString() + parametersForPlaces;
         return startPageUrl.Uri;
     }
 

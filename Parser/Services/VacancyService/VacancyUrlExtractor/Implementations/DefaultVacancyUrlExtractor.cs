@@ -32,7 +32,7 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         return result;
     }
 
-    protected virtual Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> regions, JsonElement pageWithVacanciesParseRule)
+    protected virtual Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> places, JsonElement pageWithVacanciesParseRule)
     {
         UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
         NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
