@@ -14,11 +14,13 @@ public class VacanciesCollectorService : IVacanciesCollector
         {
             { "default", new DefaultVacancyParser(httpClient) },
             { "hh.ru", new HeadHunterVacancyParser(httpClient) },
+            { "superjob", new SuperJobVacancyParser(httpClient) }
         };
         _vacancyUrlExtractors = new Dictionary<string, IVacancyUrlExtractor>
         {
             { "default", new DefaultVacancyUrlExtractor(httpClient) },
             { "hh.ru", new HeadHunterUrlExtractor(httpClient) },
+            { "superjob", new SuperJobUrlExtractor(httpClient) }
         };
     }
 
@@ -43,7 +45,7 @@ public class VacanciesCollectorService : IVacanciesCollector
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("ЧТо-то пошли не так", ex.Message);
+                        Console.WriteLine("Что-то пошли не так", ex.Message);
                         return null;
                     }
                 })

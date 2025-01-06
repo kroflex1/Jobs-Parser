@@ -36,10 +36,98 @@ public class ApplicationDbContext : DbContext
 
     private void fillWithDefaultValues(ModelBuilder modelBuilder)
     {
-        Guid pageWithVacanciesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        fillDefaultValuesForHeadHunter(modelBuilder);
+        fillDefaultValueForSuperJob(modelBuilder);
+    }
+
+    private void fillDefaultValueForSuperJob(ModelBuilder modelBuilder)
+    {
+        Guid pageWithVacanciesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
         Guid vacancyParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
-        Guid pageWithResumesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000003");
-        Guid resumeParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000004");
+        Guid pageWithResumesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        Guid resumeParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
+        modelBuilder.Entity<PageWithVacanciesParseRule>().HasData(
+            new PageWithVacanciesParseRule
+            {
+                Id = pageWithVacanciesParseRuleId,
+                Rules = JsonSerializer.Serialize(new
+                {
+                    UrlWithVacancies = "https://www.superjob.ru/vacancy/search",
+                    ParamNameForVacancyTitle = "keywords",
+                    ParamNameForVacanciesWithSalary = "payment_defined",
+                    ParamNameForRegion = "geo",
+                    VacancyUrlNode = "//div[@class='f-test-search-result-item']/div/div/div/div/div/div//a[contains(@class, 'vhN9a')]",
+                    NextPageNode = "//a[contains(@class, 'f-test-button-dalshe')]"
+                })
+            }
+        );
+
+        modelBuilder.Entity<VacancyParseRule>().HasData(
+            new VacancyParseRule
+            {
+                Id = vacancyParseRuleId,
+                Rules = JsonSerializer.Serialize(new
+                {
+                    CompanyNameNode = "//div[@class='CgUNH _2ASwq _1wr1m _3ZU2u S5lKl']/div/div/div/div/a/span",
+                    NameNode = "//h1[@class='_4zi0R _1wr1m _26u2P S5lKl _18w7M _1Ybm2 _1vuA_ gIJzo']",
+                    CityNode = "//div[@class='CgUNH _4zi0R _1wr1m _26u2P S5lKl Oc7ey']//span[@class='_2AOqy _1Ybm2 _3Owqe _3GqZ-']",
+                    DescriptionNode = "//div[@class='ymnAz _3ReRI ETQBj NMqQC']/div[2]",
+                    SalaryNode = "//span[@class='kk-+S _18w7M _1Ybm2 _3GqZ-']",
+                    CreationTimeNode = "//div[contains(@class, 'f-test-vacancy-base-info')][1]/div/div/div[@class='v3Bti'][2]/span"
+                })
+            }
+        );
+
+        modelBuilder.Entity<PageWithResumesParseRule>().HasData(
+            new PageWithResumesParseRule
+            {
+                Id = pageWithResumesParseRuleId,
+                Rules = JsonSerializer.Serialize(new
+                {
+                    UrlWithResumes = "",
+                    ParamNameForResumeTitle = "",
+                    ResumeUrlNode = "",
+                    NextPageNode = "",
+                })
+            }
+        );
+        
+        modelBuilder.Entity<ResumeParseRule>().HasData(
+            new ResumeParseRule
+            {
+                Id = resumeParseRuleId,
+                Rules = JsonSerializer.Serialize(new
+                {
+                    RoleNode = "",
+                    PhoneContactNode = "",
+                    EmailContactNode = "",
+                    PersonalContactNode = "",
+                    SalaryNode = "",
+                    CityNode = ""
+                })
+            }
+        );
+
+        modelBuilder.Entity<SiteParseRule>().HasData(
+            new SiteParseRule
+            {
+                Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                SiteName = "superjob",
+                PageWithVacanciesParseRuleId = pageWithVacanciesParseRuleId,
+                VacancyParseRuleId = vacancyParseRuleId,
+                PageWithResumesParseRuleId = pageWithResumesParseRuleId,
+                ResumeParseRuleId = resumeParseRuleId
+            }
+        );
+    }
+    
+    private void fillDefaultValuesForHeadHunter(ModelBuilder modelBuilder)
+    {
+        Guid pageWithVacanciesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        Guid vacancyParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        Guid pageWithResumesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        Guid resumeParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
         modelBuilder.Entity<PageWithVacanciesParseRule>().HasData(
             new PageWithVacanciesParseRule
@@ -79,10 +167,10 @@ public class ApplicationDbContext : DbContext
                 Id = pageWithResumesParseRuleId,
                 Rules = JsonSerializer.Serialize(new
                 {
-                    UrlWithResumes = "",
-                    ParamNameForResumeTitle = "",
-                    ResumeUrlNode = "",
-                    NextPageNode = "",
+                    UrlWithResumes = "https://hh.ru/search/resume",
+                    ParamNameForResumeTitle = "text",
+                    ResumeUrlNode = "//div[contains(@class, 'resume-card-content')]//a[@data-qa='serp-item__title']",
+                    NextPageNode = "//a[@data-qa='pager-next']",
                 })
             }
         );
@@ -107,7 +195,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<SiteParseRule>().HasData(
             new SiteParseRule
             {
-                Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
+                Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 SiteName = "hh.ru",
                 PageWithVacanciesParseRuleId = pageWithVacanciesParseRuleId,
                 VacancyParseRuleId = vacancyParseRuleId,
