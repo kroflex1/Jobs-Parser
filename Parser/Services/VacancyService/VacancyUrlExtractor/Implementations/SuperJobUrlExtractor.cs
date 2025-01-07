@@ -31,25 +31,28 @@ public class SuperJobUrlExtractor : DefaultVacancyUrlExtractor
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] = string.Join(",", keyWords);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "1";
 
+        StringBuilder parametersForPlaces = new StringBuilder("&");
         int numberOfRegions = 0;
         int numberOfTowns = 0;
         foreach (string place in places)
         {
-            StringBuilder paramName = new StringBuilder(pageWithVacanciesParseRule.GetProperty("ParamNameForRegion").GetString());
+            StringBuilder paramNameForRegion = new StringBuilder(pageWithVacanciesParseRule.GetProperty("ParamNameForRegion").GetString());
             if (_regions.ContainsKey(place.ToLower()))
             {
-                paramName.Append("[o]").Append("[" + numberOfRegions + "]");
-                parameters[paramName.ToString()] = _regions[place.ToLower()].ToString();
+                parametersForPlaces.Append($"{paramNameForRegion}[o][{numberOfRegions}]").Append('=').Append(_regions[place.ToLower()]);
                 numberOfRegions++;
+                parametersForPlaces.Append("&");
             }
             else if (_towns.ContainsKey(place.ToLower()))
             {
-                paramName.Append("[t]").Append("[" + numberOfTowns + "]");
-                parameters[paramName.ToString()] = _towns[place.ToLower()].ToString();
+                parametersForPlaces.Append($"{paramNameForRegion}[t][{numberOfTowns}]").Append('=').Append(_towns[place.ToLower()]);
                 numberOfTowns++;
+                parametersForPlaces.Append("&");
             }
         }
-        startPageUrl.Query = parameters.ToString();
+
+        parametersForPlaces.Remove(parametersForPlaces.Length - 1, 1);
+        startPageUrl.Query = parameters.ToString() + parametersForPlaces;
         return startPageUrl.Uri;
     }
 
