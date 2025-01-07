@@ -75,6 +75,10 @@ public class DefaultVacancyParser : IVacancyParser
     {
         // Создаем HttpRequestMessage для отправки GET-запроса
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, linkToVacancy);
+        foreach (var header in GetHeadersForRequest(parseRules))
+        {
+            request.Headers.Add(header.Key, header.Value);
+        }
 
         HttpResponseMessage response;
         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
@@ -120,6 +124,14 @@ public class DefaultVacancyParser : IVacancyParser
             CreationTime = GetCreationTime(htmlDocument, parseRules)
         };
         return vacancy;
+    }
+    
+    protected virtual Dictionary<string, string> GetHeadersForRequest(JsonElement parseRules)
+    {
+        return new Dictionary<string, string>()
+        {
+            { "User-Agent", "JobParser" }
+        };
     }
 
     /// <summary>

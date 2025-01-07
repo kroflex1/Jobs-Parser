@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Web;
 using HtmlAgilityPack;
@@ -23,13 +24,38 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         {
             Thread.Sleep(1000);
             HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(_httpClient.GetStringAsync(currentPageUrl).Result);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, currentPageUrl))
+            {
+                foreach (var header in GetHeadersForRequest(pageWithVacanciesParseRule))
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
+
+                var requestResult = _httpClient.SendAsync(request).Result;
+                if (requestResult.IsSuccessStatusCode)
+                {
+                    htmlDoc.LoadHtml(requestResult.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+                }
+                else
+                {
+                    return result;
+                }
+            }
 
             List<Uri> vacancies = GetVacancyUrlsFromPage(htmlDoc, pageWithVacanciesParseRule, keyWords, regions);
             result.AddRange(vacancies);
             currentPageUrl = GetNextPageWithVacanciesUrl(currentPageUrl, htmlDoc, pageWithVacanciesParseRule, keyWords, regions);
         }
+
         return result;
+    }
+
+    protected virtual Dictionary<string, string> GetHeadersForRequest(JsonElement pageWithVacanciesParseRule)
+    {
+        return new Dictionary<string, string>()
+        {
+            { "User-Agent", "JobParser" }
+        };
     }
 
     protected virtual Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> places, JsonElement pageWithVacanciesParseRule)
@@ -42,7 +68,8 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         return startPageUrl.Uri;
     }
 
-    protected virtual List<Uri> GetVacancyUrlsFromPage(HtmlDocument htmlDocument, JsonElement pageWithVacanciesParseRule, HashSet<string> keyWords, HashSet<string> regions)
+    protected virtual List<Uri> GetVacancyUrlsFromPage(HtmlDocument htmlDocument, JsonElement pageWithVacanciesParseRule, HashSet<string> keyWords,
+        HashSet<string> regions)
     {
         string vacancyLinkXPath = pageWithVacanciesParseRule.GetProperty("VacancyUrlNode").GetString();
         HtmlNodeCollection vacancyNodes = htmlDocument.DocumentNode.SelectNodes(vacancyLinkXPath);
@@ -63,14 +90,11 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
         return vacanciesLinks;
     }
 
-    protected virtual Uri GetNextPageWithVacanciesUrl(Uri currentPageUrl, HtmlDocument htmlDocument, JsonElement pageWithVacanciesParseRule, HashSet<string> keyWords, HashSet<string> regions)
+    protected virtual Uri GetNextPageWithVacanciesUrl(Uri currentPageUrl, HtmlDocument currentHtmlDocumentWithVacancies, JsonElement pageWithVacanciesParseRule,
+        HashSet<string> keyWords, HashSet<string> regions)
     {
-        string response = _httpClient.GetStringAsync(currentPageUrl).Result;
-        HtmlDocument htmlDoc = new HtmlDocument();
-        htmlDoc.LoadHtml(response);
-
         string nextPageXpath = pageWithVacanciesParseRule.GetProperty("NextPageNode").GetString();
-        HtmlNode nextPageNode = htmlDoc.DocumentNode.SelectSingleNode(nextPageXpath);
+        HtmlNode nextPageNode = currentHtmlDocumentWithVacancies.DocumentNode.SelectSingleNode(nextPageXpath);
         if (nextPageNode != null)
         {
             string nextPageUrl = nextPageNode.GetAttributeValue("href", string.Empty);
