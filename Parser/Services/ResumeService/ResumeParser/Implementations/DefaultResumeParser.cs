@@ -13,6 +13,10 @@ public class DefaultResumeParser : IResumeParser
     {
         // Создаем HttpRequestMessage для отправки GET-запроса
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, linkToResume);
+        foreach (var header in GetHeadersForRequest(parseRules))
+        {
+            request.Headers.Add(header.Key, header.Value);
+        }
 
         HttpResponseMessage response;
         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
@@ -57,6 +61,23 @@ public class DefaultResumeParser : IResumeParser
     }
     
     /// <summary>
+    /// Получение значений, который будут помещены в заголовки запроса.
+    /// </summary>
+    /// <param name="parseRules">
+    /// JSON-объект с правилами парсинга, который может включать значения для заголовков.
+    /// </param>
+    /// <returns>
+    /// Словарь, в котором key и value соответсвенно ранвы key и value для заголовка
+    /// </returns>
+    protected virtual Dictionary<string, string> GetHeadersForRequest(JsonElement parseRules)
+    {
+        return new Dictionary<string, string>()
+        {
+            { "User-Agent", "JobParser" }
+        };
+    }
+
+    /// <summary>
     /// Извлекает ФИО рекрутера из HTML-документа с использованием настроек парсинга.
     /// </summary>
     /// <param name="htmlDocument">
@@ -84,7 +105,7 @@ public class DefaultResumeParser : IResumeParser
         HtmlNode fullNameNode = htmlDocument.DocumentNode.SelectSingleNode(fullNameXPath);
         return fullNameNode?.InnerText.Trim() ?? string.Empty;
     }
-    
+
     /// <summary>
     /// Извлекает роль/должность рекрутера из HTML-документа с использованием настроек парсинга.
     /// </summary>
@@ -113,7 +134,7 @@ public class DefaultResumeParser : IResumeParser
         HtmlNode roleNode = htmlDocument.DocumentNode.SelectSingleNode(roleXPath);
         return roleNode?.InnerText.Trim() ?? string.Empty;
     }
-    
+
     /// <summary>
     /// Извлекает город проживания рекрутера из HTML-документа с использованием настроек парсинга.
     /// </summary>
@@ -142,7 +163,7 @@ public class DefaultResumeParser : IResumeParser
         HtmlNode cityNode = htmlDocument.DocumentNode.SelectSingleNode(cityXPath);
         return cityNode?.InnerText.Trim() ?? string.Empty;
     }
-    
+
     /// <summary>
     /// Извлекает контакты рекрутера из HTML-документа с использованием настроек парсинга.
     /// </summary>
@@ -174,9 +195,10 @@ public class DefaultResumeParser : IResumeParser
         {
             result.Append(contactsNode.InnerText.Trim());
         }
+
         return result;
     }
-    
+
     /// <summary>
     /// Извлекает стартовую зарплату рекрутера из HTML-документа с использованием настроек парсинга.
     /// </summary>
@@ -207,7 +229,7 @@ public class DefaultResumeParser : IResumeParser
             return TextParser.ExtractNumbers(salaryNode.InnerText.Trim()).Item1;
         return null;
     }
-    
+
     /// <summary>
     /// Извлекает стартовую зарплату рекрутера из HTML-документа с использованием настроек парсинга.
     /// </summary>
@@ -238,7 +260,7 @@ public class DefaultResumeParser : IResumeParser
             return TextParser.ExtractNumbers(salaryNode.InnerText.Trim()).Item2;
         return null;
     }
-    
+
     protected virtual Uri GetLinkToSource(HtmlDocument htmlDocument, JsonElement parseRules, Uri linkToSource)
     {
         return linkToSource;
