@@ -19,8 +19,8 @@ public class VacanciesCollectorService : IVacanciesCollector
         _vacancyUrlExtractors = new Dictionary<string, IVacancyUrlExtractor>
         {
             { "default", new DefaultVacancyUrlExtractor(httpClient) },
-            { "hh.ru", new HeadHunterUrlExtractor(httpClient) },
-            { "superjob", new SuperJobUrlExtractor(httpClient) }
+            { "hh.ru", new HeadHunterVacancyUrlExtractor(httpClient) },
+            { "superjob", new SuperJobVacancyUrlExtractor(httpClient) }
         };
     }
 

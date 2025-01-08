@@ -8,10 +8,11 @@ using Parser.Utils;
 
 namespace Parser.Services.VacancyParsers;
 
-public class HeadHunterUrlExtractor : DefaultVacancyUrlExtractor
+public class HeadHunterVacancyUrlExtractor : DefaultVacancyUrlExtractor
 {
     private Dictionary<string, int> _areasMap = new Dictionary<string, int>();
-    public HeadHunterUrlExtractor(HttpClient httpClient) : base(httpClient)
+
+    public HeadHunterVacancyUrlExtractor(HttpClient httpClient) : base(httpClient)
     {
         string filePath = Path.Combine(AppContext.BaseDirectory, "Resources", "hh_regions.json");
         string jsonContent = System.IO.File.ReadAllText(filePath);
@@ -25,7 +26,7 @@ public class HeadHunterUrlExtractor : DefaultVacancyUrlExtractor
             }
         }
     }
-    
+
     protected override Uri CreateLinkToStartPage(HashSet<string> keyWords, HashSet<string> places, JsonElement pageWithVacanciesParseRule)
     {
         UriBuilder startPageUrl = new UriBuilder(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
@@ -50,51 +51,30 @@ public class HeadHunterUrlExtractor : DefaultVacancyUrlExtractor
         return startPageUrl.Uri;
     }
 
-    protected override List<Uri> GetVacancyUrlsFromPage(HtmlDocument htmlDocument, JsonElement pageWithVacanciesParseRule, HashSet<string> keyWords, HashSet<string> regions)
+    // Метод извлечения данных из "areas"
+    private void ExtractAreas(JToken token)
     {
-        string vacancyLinkXPath = pageWithVacanciesParseRule.GetProperty("VacancyUrlNode").GetString();
-        HtmlNodeCollection vacancyNodes = htmlDocument.DocumentNode.SelectNodes(vacancyLinkXPath);
-        List<Uri> vacanciesLinks = new List<Uri>();
+        if (token == null) return;
 
-        if (vacancyNodes != null)
+        // Проверка, является ли текущий объект областью
+        if (token.Type == JTokenType.Object)
         {
-            foreach (var node in vacancyNodes)
+            var areaName = token["name"]?.ToString().ToLower();
+            var areaId = token["id"]?.ToObject<int>();
+
+            if (!string.IsNullOrEmpty(areaName) && areaId.HasValue)
             {
-                string vacancyLink = node.GetAttributeValue("href", string.Empty);
-                if (!string.IsNullOrEmpty(vacancyLink))
-                {
-                    vacanciesLinks.Add(new Uri(vacancyLink));
-                }
+                _areasMap[areaName] = areaId.Value;
             }
         }
 
-        return vacanciesLinks;
+        // Рекурсивная обработка вложенных объектов или массивов
+        if (token["areas"] != null)
+        {
+            foreach (var child in token["areas"])
+            {
+                ExtractAreas(child);
+            }
+        }
     }
-    
-      // Метод извлечения данных из "areas"
-      private void ExtractAreas(JToken token)
-      {
-          if (token == null) return;
-
-          // Проверка, является ли текущий объект областью
-          if (token.Type == JTokenType.Object)
-          {
-              var areaName = token["name"]?.ToString().ToLower();
-              var areaId = token["id"]?.ToObject<int>();
-
-              if (!string.IsNullOrEmpty(areaName) && areaId.HasValue)
-              {
-                  _areasMap[areaName] = areaId.Value;
-              }
-          }
-
-          // Рекурсивная обработка вложенных объектов или массивов
-          if (token["areas"] != null)
-          {
-              foreach (var child in token["areas"])
-              {
-                  ExtractAreas(child);
-              }
-          }
-      }
 }

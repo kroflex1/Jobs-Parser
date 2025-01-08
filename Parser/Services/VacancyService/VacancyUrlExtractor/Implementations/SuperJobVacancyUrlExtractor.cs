@@ -6,12 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Parser.Services.VacancyParsers;
 
-public class SuperJobUrlExtractor : DefaultVacancyUrlExtractor
+public class SuperJobVacancyUrlExtractor : DefaultVacancyUrlExtractor
 {
     private Dictionary<string, int> _towns;
     private Dictionary<string, int> _regions;
 
-    public SuperJobUrlExtractor(HttpClient httpClient) : base(httpClient)
+    public SuperJobVacancyUrlExtractor(HttpClient httpClient) : base(httpClient)
     {
         string filePathToRegions = Path.Combine(AppContext.BaseDirectory, "Resources", "superjob_regions.json");
         string jsonContentOfRegions = System.IO.File.ReadAllText(filePathToRegions);
