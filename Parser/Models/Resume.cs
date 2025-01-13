@@ -13,7 +13,7 @@ public class Resume
     public string Role { get; set; }
 
     /// <summary>
-    /// Роль/должность
+    /// Контакты
     /// </summary>
     public List<string> Contacts { get; set; }
 
@@ -36,4 +36,28 @@ public class Resume
     /// Ссылка на резюме
     /// </summary>
     public Uri LinkToSource { get; set; }
+    
+    public double getAverageSalaryValue()
+    {
+        double sum = 0;
+        int amount = 0;
+        if (SalaryFrom != null && SalaryFrom != 0)
+        {
+            sum += (int)SalaryFrom;
+            amount++;
+        }
+
+        if (SalaryTo != null && SalaryTo != 0)
+        {
+            sum += (int)SalaryTo;
+            amount++;
+        }
+
+        if (amount == 0)
+        {
+            return 0;
+        }
+
+        return sum / amount;
+    }
 }

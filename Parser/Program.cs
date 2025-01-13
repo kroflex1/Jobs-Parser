@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Parser.Data;
 using Parser.Services;
+using Parser.Services.ResumeService;
 using Parser.Services.VacancyParsers;
 using Parser.Services.XlsxGenerators;
 using Products.Api.Extensions;
@@ -14,6 +15,8 @@ builder.Services.AddControllers();
 // Регистрация сервисов
 builder.Services.AddHttpClient<VacanciesCollectorService>();
 builder.Services.AddSingleton<XlsxVacancyGeneratorService>();
+builder.Services.AddHttpClient<ResumeCollectorService>();
+builder.Services.AddSingleton<XlsxResumeGeneratorService>();
 builder.Services.AddScoped<SiteParseRulesRepository>();
 
 // Добавляем Swagger для документирования API

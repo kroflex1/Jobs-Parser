@@ -5,6 +5,10 @@ namespace Parser.Services.ResumeService.ResumeParser.Implementations;
 
 public class HeadHunterResumeParser : DefaultResumeParser
 {
+    public HeadHunterResumeParser(HttpClient httpClient) : base(httpClient)
+    {
+    }
+
     protected override List<string> GetContacts(HtmlDocument htmlDocument, JsonElement parseRules)
     {
         string? phoneContactXPath = null;

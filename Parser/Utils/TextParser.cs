@@ -136,4 +136,27 @@ public static class TextParser
 
         return fullText.Trim();
     }
+
+
+    /// <summary>
+    /// Создает список параметров с одинаковым названием, например, text=python&text=java&text=ruby
+    /// </summary>
+    /// <param name="parameterName">Имя параметра</param>
+    /// <param name="values">Значения, которые будут хранить параметры</param>
+    /// <returns>Параметры</returns>
+    public static String CreateParameters(string parameterName, List<string> values)
+    {
+        StringBuilder parameters = new StringBuilder("&");
+        foreach (string value in values)
+        {
+            parameters
+                .Append(parameterName)
+                .Append("=")
+                .Append(value)
+                .Append("&");
+        }
+
+        parameters.Remove(parameters.Length - 1, 1);
+        return parameters.ToString();
+    }
 }

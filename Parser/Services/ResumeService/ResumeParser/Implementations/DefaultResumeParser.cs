@@ -8,6 +8,11 @@ namespace Parser.Services.ResumeService.ResumeParser.Implementations;
 public class DefaultResumeParser : IResumeParser
 {
     protected readonly HttpClient _httpClient;
+    
+    public DefaultResumeParser(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
 
     public Resume? ParseResume(Uri linkToResume, JsonElement parseRules)
     {

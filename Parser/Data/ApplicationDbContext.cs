@@ -85,26 +85,25 @@ public class ApplicationDbContext : DbContext
                 Id = pageWithResumesParseRuleId,
                 Rules = JsonSerializer.Serialize(new
                 {
-                    UrlWithResumes = "",
-                    ParamNameForResumeTitle = "",
-                    ResumeUrlNode = "",
-                    NextPageNode = "",
+                    UrlWithResumes = "https://www.superjob.ru/resume/search_resume.html", 
+                    ParamNameForResumeTitle = "keywords",
+                    ParamNameForRegion = "r",
+                    ParamNameForTown = "t",
+                    ResumeUrlNode = "//div[contains(@class, 'f-test-resume-snippet')]/div/div/div/div/div/div[2]/div[2]/a[1]",
+                    NextPageNode = "//a[contains(@class, 'f-test-button-dalshe')]"
                 })
             }
         );
-        
+
         modelBuilder.Entity<ResumeParseRule>().HasData(
             new ResumeParseRule
             {
                 Id = resumeParseRuleId,
                 Rules = JsonSerializer.Serialize(new
                 {
-                    RoleNode = "",
-                    PhoneContactNode = "",
-                    EmailContactNode = "",
-                    PersonalContactNode = "",
-                    SalaryNode = "",
-                    CityNode = ""
+                    RoleNode = "//h1[@class='VB8-V _2J9pJ yl-Ea _1r5YN']",
+                    SalaryNode = "//span[@class='_2J9pJ yl-Ea _2brpX']",
+                    CityNode = "//div[@class='J+R2u']"
                 })
             }
         );
@@ -121,7 +120,7 @@ public class ApplicationDbContext : DbContext
             }
         );
     }
-    
+
     private void fillDefaultValuesForHeadHunter(ModelBuilder modelBuilder)
     {
         Guid pageWithVacanciesParseRuleId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -169,6 +168,8 @@ public class ApplicationDbContext : DbContext
                 {
                     UrlWithResumes = "https://hh.ru/search/resume",
                     ParamNameForResumeTitle = "text",
+                    ParamNameForSearchStatus = "job_search_status",
+                    ParamNameForRegion = "area",
                     ResumeUrlNode = "//div[contains(@class, 'resume-card-content')]//a[@data-qa='serp-item__title']",
                     NextPageNode = "//a[@data-qa='pager-next']",
                 })
@@ -187,7 +188,7 @@ public class ApplicationDbContext : DbContext
                     EmailContactNode = "//div[@data-qa='resume-contact-email']",
                     PersonalContactNode = "//div[@data-qa='resume-personalsite-personal']/a",
                     SalaryNode = "//span[@class='resume-block__salary']",
-                    CityNode = "//span[@class='resume-personal-address']"
+                    CityNode = "//span[@data-qa='resume-personal-address']"
                 })
             }
         );
