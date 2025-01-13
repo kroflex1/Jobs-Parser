@@ -82,7 +82,13 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
                 string vacancyLink = node.GetAttributeValue("href", string.Empty);
                 if (!string.IsNullOrEmpty(vacancyLink))
                 {
-                    vacanciesLinks.Add(new Uri(vacancyLink));
+                    if (Uri.TryCreate(vacancyLink, UriKind.Absolute, out var absoluteUri))
+                    {
+                        vacanciesLinks.Add(new Uri(vacancyLink));
+                        continue;
+                    }
+                    Uri baseUri = new Uri(pageWithVacanciesParseRule.GetProperty("UrlWithVacancies").GetString());
+                    vacanciesLinks.Add(new Uri(baseUri, vacancyLink));
                 }
             }
         }

@@ -34,7 +34,8 @@ public class DefaultVacancyParser : IVacancyParser
             "Над чем предстоит работать",
             "Что будет представлять из себя стажировка?",
             "Как мы работаем",
-            "Что делать"
+            "Что делать",
+            "Что предстоит делать"
         ]);
         XPathForRequirementTitle = TextParser.CreateXPathForNodeWithText([
             "Мы ожидаем",
@@ -58,7 +59,8 @@ public class DefaultVacancyParser : IVacancyParser
             "Требуемая квалификация",
             "Мы будем рады видеть тебя в нашей команде, если ты имеешь",
             "Наш стэк",
-            "Ты подойдёшь, если"
+            "Ты подойдёшь, если",
+            "Что мы от тебя ждем"
         ]);
         XPathForConditionTitle = TextParser.CreateXPathForNodeWithText([
             "Условия",
