@@ -9,6 +9,17 @@ using Products.Api.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+// CORS с настройкой "разрешить все"
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // Разрешает доступ с любого домена
+            .AllowAnyMethod()  // Разрешает все методы (GET, POST и т.д.)
+            .AllowAnyHeader(); // Разрешает любые заголовки
+    });
+});
+
 // Добавляем контроллеры
 builder.Services.AddControllers();
 
@@ -37,13 +48,15 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-
 WebApplication app = builder.Build();
 
 // Настройка Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
+
 app.ApplyMigrations();
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
