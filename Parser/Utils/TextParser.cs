@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -13,31 +14,31 @@ public static class TextParser
     /// </summary>
     /// <param name="input">Текст, содержащий диапазон чисел</param>
     /// <returns>Кортеж, содержащий два числа. Значение будет равно 0, если его нет тексте нет.</returns>
-    public static Tuple<int, int> ExtractNumbers(string input)
+    public static List<int> ExtractNumbers(string input)
     {
         // Регулярное выражение для чисел, допускающих пробелы внутри (например, "70 000")
         Regex regex = new Regex(@"\d{1,3}(?:\s\d{3})*");
         MatchCollection matches = regex.Matches(input);
 
-        int firstNumber = 0;
-        int secondNumber = 0;
+        List<int> numbers = new List<int>();
+        
 
         if (matches.Count == 0)
         {
-            return Tuple.Create(0, 0);
+            return numbers;
         }
 
-        if (matches.Count > 0)
+        if (matches.Count >= 1)
         {
-            firstNumber = int.Parse(Regex.Replace(matches[0].Value, @"\s+", ""));
+            numbers.Add(int.Parse(Regex.Replace(matches[0].Value, @"\s+", "")));
         }
 
-        if (matches.Count > 1)
+        if (matches.Count == 2)
         {
-            secondNumber = int.Parse(Regex.Replace(matches[1].Value, @"\s+", ""));
+            numbers.Add(int.Parse(Regex.Replace(matches[1].Value, @"\s+", "")));
         }
 
-        return Tuple.Create(firstNumber, secondNumber);
+        return numbers;
     }
 
     /// <summary>

@@ -66,7 +66,7 @@ namespace Parser.Services.XlsxGenerators
                 row.Cell(cellNumber++).Value = vacancy.Conditions; //Условия
                 row.Cell(cellNumber++).Value = vacancy.KeySkills; //Ключевые навыки
                 row.Cell(cellNumber++).Value = vacancy.SalaryFrom; //ЗП от
-                row.Cell(cellNumber++).Value = vacancy.SalaryTo == null || vacancy.SalaryTo == 0 ? "-" : vacancy.SalaryTo; //ЗП до
+                row.Cell(cellNumber++).Value = vacancy.SalaryTo == null || vacancy.SalaryTo == 0 ? "" : vacancy.SalaryTo; //ЗП до
                 row.Cell(cellNumber).Value = vacancy.getAverageSalaryValue(); //Результирующий уровень ЗП
             }
         }
@@ -111,8 +111,9 @@ namespace Parser.Services.XlsxGenerators
             {
                 IXLRow row = worksheet.Row(i + 2);
                 int cellNumber = 1;
+                int percentile = GetPercentileFromSortedValues(percentiles[i], sortedAverageSalary);
                 row.Cell(cellNumber++).Value = percentiles[i] + "%"; //Перцентиль
-                row.Cell(cellNumber).Value = GetPercentileFromSortedValues(percentiles[i], sortedAverageSalary); //Значение перцентиля
+                row.Cell(cellNumber).Value = percentile == -1 ? "" : percentile; //Значение перцентиля
             }
         }
 
@@ -129,6 +130,11 @@ namespace Parser.Services.XlsxGenerators
 
         private int GetPercentileFromSortedValues(int percentile, List<int> sortedValues)
         {
+            if (sortedValues.Count == 0)
+            {
+                return -1;
+            }
+
             return sortedValues[percentile * sortedValues.Count / 100];
         }
     }

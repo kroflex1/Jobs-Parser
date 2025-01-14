@@ -231,7 +231,22 @@ public class DefaultResumeParser : IResumeParser
 
         HtmlNode salaryNode = htmlDocument.DocumentNode.SelectSingleNode(salaryXPath);
         if (salaryNode != null)
-            return TextParser.ExtractNumbers(salaryNode.InnerText.Trim()).Item1;
+        {
+            string text = salaryNode.InnerText.Trim().ToLower();
+            List<int> values = TextParser.ExtractNumbers(text);
+            if (values.Count == 0)
+            {
+                return null;
+            }
+            if (values.Count == 2)
+            {
+                return values[0];
+            }
+            if (values.Count == 1 && !text.Contains("до"))
+            {
+                return values[0];
+            }
+        }
         return null;
     }
 
@@ -262,7 +277,22 @@ public class DefaultResumeParser : IResumeParser
 
         HtmlNode salaryNode = htmlDocument.DocumentNode.SelectSingleNode(salaryXPath);
         if (salaryNode != null)
-            return TextParser.ExtractNumbers(salaryNode.InnerText.Trim()).Item2;
+        {
+            string text = salaryNode.InnerText.Trim().ToLower();
+            List<int> values = TextParser.ExtractNumbers(text);
+            if (values.Count == 0)
+            {
+                return null;
+            }
+            if (values.Count == 2)
+            {
+                return values[1];
+            }
+            if (values.Count == 1 && text.Contains("до"))
+            {
+                return values[0];
+            }
+        }
         return null;
     }
 
