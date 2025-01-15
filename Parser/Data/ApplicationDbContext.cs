@@ -57,7 +57,7 @@ public class ApplicationDbContext : DbContext
                     ParamNameForVacancyTitle = "keywords",
                     ParamNameForVacanciesWithSalary = "payment_defined",
                     ParamNameForRegion = "geo",
-                    VacancyUrlNode = "//div[@class='f-test-search-result-item']/div/div/div/div/div/div//a[contains(@class, 'vhN9a')]",
+                    VacancyUrlNode = "//div[@class='f-test-search-result-item']/div[contains(@class, '_2zcxj')]/div/div/div/div/div[2]/div/div/div//a",
                     NextPageNode = "//a[contains(@class, 'f-test-button-dalshe')]"
                 })
             }
@@ -69,12 +69,12 @@ public class ApplicationDbContext : DbContext
                 Id = vacancyParseRuleId,
                 Rules = JsonSerializer.Serialize(new
                 {
-                    CompanyNameNode = "//div[@class='CgUNH _2ASwq _1wr1m _3ZU2u S5lKl']/div/div/div/div/a/span",
-                    NameNode = "//h1[@class='_4zi0R _1wr1m _26u2P S5lKl _18w7M _1Ybm2 _1vuA_ gIJzo']",
-                    CityNode = "//div[@class='CgUNH _4zi0R _1wr1m _26u2P S5lKl Oc7ey']//span[@class='_2AOqy _1Ybm2 _3Owqe _3GqZ-']",
-                    DescriptionNode = "//div[@class='ymnAz _3ReRI ETQBj NMqQC']/div[2]",
-                    SalaryNode = "//span[@class='kk-+S _18w7M _1Ybm2 _3GqZ-']",
-                    CreationTimeNode = "//div[contains(@class, 'f-test-vacancy-base-info')][1]/div/div/div[@class='v3Bti'][2]/span"
+                    CompanyNameNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[4]/div/div[1]/div[2]/div/div/div/div/a",
+                    NameNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[3]/h1",
+                    CityNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[4]/div/div/div/div[2]/div/div/div/div/div/span",
+                    DescriptionNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[4]/div/div[2]",
+                    SalaryNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[3]/span",
+                    CreationTimeNode = "//div[contains(@class, 'f-test-title')][1]/div[2]"
                 })
             }
         );
@@ -138,6 +138,8 @@ public class ApplicationDbContext : DbContext
                     ParamNameForVacancyTitle = "text",
                     ParamNameForVacanciesWithSalary = "only_with_salary",
                     ParamNameForRegion = "area",
+                    ParamNameForItemsOnPage = "items_on_page",
+                    ParamNameForPage = "page",
                     VacancyUrlNode = "//div[contains(@class, 'vacancy-info')]//a[@data-qa='serp-item__title']",
                     NextPageNode = "//a[@data-qa='pager-next']"
                 })
@@ -154,7 +156,7 @@ public class ApplicationDbContext : DbContext
                     NameNode = "//h1[@data-qa='vacancy-title']",
                     CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
                     DescriptionNode = "//div[@data-qa='vacancy-description']",
-                    SalaryNode = "//span[@data-qa='vacancy-salary-compensation-type-net']",
+                    SalaryNode = "//span[@data-qa='vacancy-salary-compensation-type-net'] | //span[@data-qa='vacancy-salary-compensation-type-gross']",
                     CreationTimeNode = "//p[@class='vacancy-creation-time-redesigned']/span"
                 })
             }

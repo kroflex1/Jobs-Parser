@@ -313,7 +313,7 @@ public class DefaultVacancyParser : IVacancyParser
             {
                 return values[0];
             }
-            if (values.Count == 1 && !text.Contains("до"))
+            if (values.Count == 1 && text.Contains("до"))
             {
                 return values[0];
             }
@@ -346,7 +346,7 @@ public class DefaultVacancyParser : IVacancyParser
             {
                 return values[1];
             }
-            if (values.Count == 1 && text.Contains("до"))
+            if (values.Count == 1 && !text.Contains("до"))
             {
                 return values[0];
             }

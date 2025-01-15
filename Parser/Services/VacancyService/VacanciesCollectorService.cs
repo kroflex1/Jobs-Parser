@@ -40,7 +40,6 @@ public class VacanciesCollectorService : IVacanciesCollector
                 {
                     try
                     {
-                        Thread.Sleep(200);
                         return vacancyParser.ParseVacancy(link, TextParser.ParseStringToJsonElement(parseRule.VacancyParseRule.Rules));
                     }
                     catch (Exception ex)
@@ -79,12 +78,6 @@ public class VacanciesCollectorService : IVacanciesCollector
         {
             return false;
         }
-
-        if (vacancy.CreationTime < DateTime.Now.AddMonths(-3))
-        {
-            return false;
-        }
-
         return true;
     }
 }

@@ -43,6 +43,10 @@ public class DefaultVacancyUrlExtractor : IVacancyUrlExtractor
             }
 
             List<Uri> vacancies = GetVacancyUrlsFromPage(htmlDoc, pageWithVacanciesParseRule, keyWords, regions);
+            if (vacancies.Count == 0)
+            {
+                return result;
+            }
             result.AddRange(vacancies);
             currentPageUrl = GetNextPageWithVacanciesUrl(currentPageUrl, htmlDoc, pageWithVacanciesParseRule, keyWords, regions);
         }

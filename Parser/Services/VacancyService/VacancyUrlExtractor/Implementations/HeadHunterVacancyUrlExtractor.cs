@@ -33,6 +33,8 @@ public class HeadHunterVacancyUrlExtractor : DefaultVacancyUrlExtractor
         NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacancyTitle").GetString()] = string.Join(" or ", keyWords);
         parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForVacanciesWithSalary").GetString()] = "true";
+        parameters[pageWithVacanciesParseRule.GetProperty("ParamNameForItemsOnPage").GetString()] = "20";
+
         StringBuilder parametersForPlaces = new StringBuilder("&");
         foreach (string region in places)
         {
@@ -49,6 +51,36 @@ public class HeadHunterVacancyUrlExtractor : DefaultVacancyUrlExtractor
         parametersForPlaces.Remove(parametersForPlaces.Length - 1, 1);
         startPageUrl.Query = parameters.ToString() + parametersForPlaces;
         return startPageUrl.Uri;
+    }
+
+    protected override Uri GetNextPageWithVacanciesUrl(Uri currentPageUrl, HtmlDocument currentHtmlDocumentWithVacancies,
+        JsonElement pageWithVacanciesParseRule,
+        HashSet<string> keyWords, HashSet<string> regions)
+    {
+
+        string paramNameForPage = pageWithVacanciesParseRule.GetProperty("ParamNameForPage").GetString();
+        if (paramNameForPage != null)
+        {
+            NameValueCollection queryParams = HttpUtility.ParseQueryString(currentPageUrl.Query);
+            // Получение значения параметра 'param1'
+            string currentPageNumber = queryParams["page"];
+            if (currentPageNumber == null)
+            {
+                queryParams[paramNameForPage] = "1";
+            }
+            else
+            {
+                int newPageNumber = int.Parse(currentPageNumber) + 1;
+                queryParams[paramNameForPage] = newPageNumber.ToString();
+            }
+            // Строим новый Uri с измененной строкой запроса
+            UriBuilder uriBuilder = new UriBuilder(currentPageUrl)
+            {
+                Query = queryParams.ToString()
+            };
+            return uriBuilder.Uri;
+        }
+        return null;
     }
 
     // Метод извлечения данных из "areas"
