@@ -1,0 +1,33 @@
+﻿version: "3.8"
+
+networks:
+  parser_network:
+    driver: bridge
+
+services:
+  parser:
+    image: parser
+    container_name: parser
+    build:
+      context: .
+      dockerfile: Parser/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - parser_network
+
+  database:
+    image: postgres:latest
+    container_name: database
+    environment:
+      - POSTGRES_DB=parser
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./containers/products-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - parser_network
