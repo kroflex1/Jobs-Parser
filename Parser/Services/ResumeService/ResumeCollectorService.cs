@@ -54,7 +54,7 @@ public class ResumeCollectorService : IResumesCollectorService
                     }
                 })
                 .Where(resume => IsValidResume(resume, regions))
-                .Take(78)
+                .Take(115)
                 .ToList();
             result.AddRange(vacancies);
         }

@@ -20,27 +20,30 @@ public class DefaultResumeUrlExtractor : IResumeUrlExtractor
         List<Uri> result = new List<Uri>();
         while (currentPageUrl != null)
         {
-            Thread.Sleep(1000);
             HtmlDocument htmlDoc = new HtmlDocument();
-            using (var request = new HttpRequestMessage(HttpMethod.Get, currentPageUrl))
+            
+            if (!currentPageUrl.ToString().StartsWith("file://"))
             {
-                foreach (var header in GetHeadersForRequest(pageWithResumesParseRule))
+                using (var request = new HttpRequestMessage(HttpMethod.Get, currentPageUrl))
                 {
-                    request.Headers.Add(header.Key, header.Value);
-                }
+                    foreach (var header in GetHeadersForRequest(pageWithResumesParseRule))
+                    {
+                        request.Headers.Add(header.Key, header.Value);
+                    }
 
-                var requestResult = _httpClient.SendAsync(request).Result;
-                if (requestResult.IsSuccessStatusCode)
-                {
-                    var x = requestResult.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    htmlDoc.LoadHtml(requestResult.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-                }
-                else
-                {
-                    return result;
+                    var requestResult = _httpClient.SendAsync(request).Result;
+                    if (requestResult.IsSuccessStatusCode)
+                    {
+                        var x = requestResult.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        htmlDoc.LoadHtml(requestResult.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+                    }
+                    else
+                    {
+                        return result;
+                    }
                 }
             }
-
+            
             List<Uri> resumeUrls = GetResumeUrlsFromPage(htmlDoc, pageWithResumesParseRule, keyWords, regions);
             result.AddRange(resumeUrls);
             currentPageUrl = GetNextPageWithResumeUrls(currentPageUrl, htmlDoc, pageWithResumesParseRule, keyWords, regions);
