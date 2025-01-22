@@ -31,7 +31,7 @@ public class ResumeController : Controller
     /// <param name="regions">Регионы, в котором ищем резюме.</param>
     /// <returns>Файл XLSX с данными о резюме.</returns>
     [HttpGet("parse")]
-    public async Task<IActionResult> ParseResumes([FromQuery] string keyWords, [FromQuery] string regions)
+    public async Task<IActionResult> ParseResumes([FromQuery] string keyWords, [FromQuery] string regions, [FromQuery] bool isKeyWordsInTitle = true)
     {
         if (keyWords == null)
         {
@@ -48,7 +48,7 @@ public class ResumeController : Controller
         try
         {
             List<SiteParseRule> parseRules = await _siteParseRuleRepository.GetAllSiteParseRules();
-            List<Resume> vacancies = _resumeCollectorService.ParseResumesFromSites(parseRules, keyWordsList, regionsList);
+            List<Resume> vacancies = _resumeCollectorService.ParseResumesFromSites(parseRules, keyWordsList, regionsList, isKeyWordsInTitle);
             byte[] fileBytes = _xlsxResumeService.GenerateXlsx(vacancies);
             string fileName = $"Resumes_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

@@ -24,7 +24,8 @@ public class VacanciesCollectorService : IVacanciesCollector
         };
     }
 
-    public List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions, int publicationAtMonth)
+    public List<Vacancy> ParseVacanciesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions, int publicationAtMonth,
+        bool isKeyWordsInTitle)
     {
         List<Vacancy> result = new List<Vacancy>();
         foreach (SiteParseRule parseRule in siteParseRules)
@@ -48,7 +49,7 @@ public class VacanciesCollectorService : IVacanciesCollector
                         return null;
                     }
                 })
-                .Where(vacancy => IsValidVacancy(vacancy, regions, publicationAtMonth))
+                .Where(vacancy => IsValidVacancy(vacancy, keyWords, regions, publicationAtMonth, isKeyWordsInTitle))
                 .ToList();
             result.AddRange(vacancies);
         }
@@ -57,7 +58,7 @@ public class VacanciesCollectorService : IVacanciesCollector
     }
 
 
-    private Boolean IsValidVacancy(Vacancy vacancy, HashSet<string> regions, int publicationAtMonth)
+    private Boolean IsValidVacancy(Vacancy vacancy, HashSet<string> keyWords, HashSet<string> regions, int publicationAtMonth, bool isKeyWordsInTitle)
     {
         if (vacancy == null)
         {
@@ -78,6 +79,19 @@ public class VacanciesCollectorService : IVacanciesCollector
         {
             return false;
         }
+
+        if (isKeyWordsInTitle)
+        {
+            foreach (string keyWord in keyWords)
+            {
+                var x = vacancy.Name.ToLower();
+                if (!x.Contains(keyWord))
+                {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 }

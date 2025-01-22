@@ -32,7 +32,7 @@ public class VacancyController : Controller
     /// <param name="publicationAtMonth">Насколько давно была опубликована вакансия, 1 месяц назад, 2 месяца назад и т.д..</param>
     /// <returns>Файл XLSX с данными о вакансиях.</returns>
     [HttpGet("parse")]
-    public async Task<IActionResult> ParseVacancies([FromQuery] string keyWords, [FromQuery] string regions, [FromQuery] int publicationAtMonth)
+    public async Task<IActionResult> ParseVacancies([FromQuery] string keyWords, [FromQuery] string regions, [FromQuery] int publicationAtMonth, [FromQuery] bool isKeyWordsInTitle = true)
     {
         if (keyWords == null || regions == null)
         {
@@ -48,7 +48,7 @@ public class VacancyController : Controller
         try
         {
             List<SiteParseRule> parseRules = await _siteParseRuleRepository.GetAllSiteParseRules();
-            List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList, publicationAtMonth);
+            List<Vacancy> vacancies = _vacanciesCollectorService.ParseVacanciesFromSites(parseRules, keyWordsList, regionsList, publicationAtMonth, isKeyWordsInTitle);
             byte[] fileBytes = _xlsxVacancyService.GenerateXlsx(vacancies);
             string fileName = $"Vacancies_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
             return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

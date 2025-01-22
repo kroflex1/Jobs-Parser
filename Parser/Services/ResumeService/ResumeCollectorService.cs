@@ -28,7 +28,7 @@ public class ResumeCollectorService : IResumesCollectorService
         };
     }
 
-    public List<Resume> ParseResumesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions)
+    public List<Resume> ParseResumesFromSites(List<SiteParseRule> siteParseRules, HashSet<string> keyWords, HashSet<string> regions, bool isKeyWordsInTitle)
     {
         List<Resume> result = new List<Resume>();
         foreach (SiteParseRule parseRule in siteParseRules)
@@ -53,7 +53,7 @@ public class ResumeCollectorService : IResumesCollectorService
                         return null;
                     }
                 })
-                .Where(resume => IsValidResume(resume, regions))
+                .Where(resume => IsValidResume(resume, keyWords, regions, isKeyWordsInTitle))
                 .Take(115)
                 .ToList();
             result.AddRange(vacancies);
@@ -63,7 +63,7 @@ public class ResumeCollectorService : IResumesCollectorService
     }
 
 
-    private Boolean IsValidResume(Resume resume, HashSet<string> regions)
+    private Boolean IsValidResume(Resume resume, HashSet<string> keyWords, HashSet<string> regions, bool isKeyWordsInTitle)
     {
         if (resume == null)
         {
@@ -73,6 +73,17 @@ public class ResumeCollectorService : IResumesCollectorService
         if (resume.Role == null || resume.Role.Trim().Length == 0)
         {
             return false;
+        }
+        
+        if (isKeyWordsInTitle)
+        {
+            foreach (string keyWord in keyWords)
+            {
+                if (!resume.Role.ToLower().Contains(keyWord))
+                {
+                    return false;
+                }
+            }
         }
 
         return true;
