@@ -74,7 +74,8 @@ public class ApplicationDbContext : DbContext
                     CityNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[4]/div/div/div/div[2]/div/div/div/div/div/span",
                     DescriptionNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[4]/div/div[2]",
                     SalaryNode = "//div[contains(@class, 'f-test-vacancy-base-info')]/div[3]/span",
-                    CreationTimeNode = "//div[contains(@class, 'f-test-title')][1]/div[2]"
+                    CreationTimeNode = "//div[contains(@class, 'f-test-title')][1]/div[2]",
+                    KeySkillsNode = "//div[contains(@class, '_1_3uM')]/ul"
                 })
             }
         );
@@ -157,7 +158,8 @@ public class ApplicationDbContext : DbContext
                     CityNode = "//span[@data-qa='vacancy-view-raw-address'] | //p[@data-qa='vacancy-view-location']",
                     DescriptionNode = "//div[@data-qa='vacancy-description']",
                     SalaryNode = "//span[@data-qa='vacancy-salary-compensation-type-net'] | //span[@data-qa='vacancy-salary-compensation-type-gross']",
-                    CreationTimeNode = "//p[@class='vacancy-creation-time-redesigned']/span"
+                    CreationTimeNode = "//p[@class='vacancy-creation-time-redesigned']/span",
+                    KeySkillsNode = "//ul[contains(@class, 'vacancy-skill-list')]"
                 })
             }
         );

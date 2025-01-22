@@ -251,12 +251,44 @@ public class DefaultVacancyParser : IVacancyParser
 
     protected virtual string GetKeySkills(HtmlDocument htmlDocument, JsonElement parseRules)
     {
-        string requirements = GetRequirements(htmlDocument, parseRules);
+        string keySkillsXPath;
+        try
+        {
+            keySkillsXPath = parseRules.GetProperty("KeySkillsNode").GetString();
+        }
+        catch (Exception e)
+        {
+            return string.Empty;
+        }
 
+        //Получаем ключевые навыки из специального нода
+        HtmlNode keySkillsNode = htmlDocument.DocumentNode.SelectSingleNode(keySkillsXPath);
+        StringBuilder resultText = new StringBuilder();
+        if (keySkillsNode != null)
+        {
+            if (keySkillsNode.Name == "ul")
+            {
+                foreach (HtmlNode liNode in keySkillsNode.SelectNodes(".//li"))
+                {
+                    resultText.Append(liNode.InnerText.Trim()).Append("\n");
+                }
+            }
+            else
+            {
+                resultText.Append(keySkillsNode.InnerText.Trim());
+            }
+        }
+        if (resultText.Length != 0)
+        {
+            return resultText.ToString();
+        }
+        
+        //Если нод не был найден, или в нём не было информации, то получаем ключевые навыки из описания вакансии
+        string requirements = GetRequirements(htmlDocument, parseRules);
         // Регулярное выражение для поиска английских слов
         string pattern = @"\b[A-Za-z]+(?:[-/][A-Za-z]+)*\b";
         MatchCollection matches = Regex.Matches(requirements, pattern);
-        
+
         StringBuilder result = new StringBuilder();
         foreach (Match match in matches)
         {
