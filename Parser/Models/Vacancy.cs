@@ -56,6 +56,11 @@
         /// Дата публикации вакансии
         /// </summary>
         public DateTime? CreationTime { get; set; }
+        
+        /// <summary>
+        /// Формат работы
+        /// </summary>
+        public List<WorkFormat>? WorkFormat { get; set; }
 
         public double getAverageSalaryValue()
         {

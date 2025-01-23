@@ -1,4 +1,6 @@
-﻿using ClosedXML.Excel;
+﻿using System.Collections;
+using System.Text;
+using ClosedXML.Excel;
 using Parser.Models;
 
 namespace Parser.Services.XlsxGenerators
@@ -33,7 +35,8 @@ namespace Parser.Services.XlsxGenerators
             int cellNumber = 1;
             titleRow.Cell(cellNumber++).Value = "Компания";
             titleRow.Cell(cellNumber++).Value = "Название вакансии";
-            titleRow.Cell(cellNumber++).Value = "Город и удалёнка";
+            titleRow.Cell(cellNumber++).Value = "Город";
+            titleRow.Cell(cellNumber++).Value = "Формат работы";
             titleRow.Cell(cellNumber++).Value = "Ссылка";
             titleRow.Cell(cellNumber++).Value = "Задача и функционал";
             titleRow.Cell(cellNumber++).Value = "Требования";
@@ -58,7 +61,9 @@ namespace Parser.Services.XlsxGenerators
                 int cellNumber = 1;
                 row.Cell(cellNumber++).Value = vacancy.CompanyName; //Компания
                 row.Cell(cellNumber++).Value = vacancy.Name; //Название вакансии
-                row.Cell(cellNumber++).Value = vacancy.City; //Город и удалёнка
+                row.Cell(cellNumber++).Value =
+                    vacancy.City + (vacancy.WorkFormat != null && vacancy.WorkFormat.Contains(WorkFormat.REMOTE) ? " или удалённо" : ""); //Город
+                row.Cell(cellNumber++).Value = GetValueForWorkFormat(vacancy); //Формат работы
                 row.Cell(cellNumber).Value = vacancy.LinkToSource.ToString(); //Ссылка
                 row.Cell(cellNumber++).SetHyperlink(new XLHyperlink(vacancy.LinkToSource.ToString()));
                 row.Cell(cellNumber++).Value = vacancy.Functional; //Задача и функционал
@@ -136,6 +141,31 @@ namespace Parser.Services.XlsxGenerators
             }
 
             return sortedValues[percentile * sortedValues.Count / 100];
+        }
+
+        private String GetValueForWorkFormat(Vacancy vacancy)
+        {
+            List<string> result = new List<string>();
+            if (vacancy.WorkFormat == null || vacancy.WorkFormat.Count == 0)
+            {
+                return "На месте";
+            }
+            foreach (WorkFormat workFormat in vacancy.WorkFormat)
+            {
+                if (workFormat.Equals(WorkFormat.INTERNAL))
+                {
+                    result.Add("На месте");
+                }
+                else if (workFormat.Equals(WorkFormat.REMOTE))
+                {
+                    result.Add("Удалённо");
+                }
+                else if (workFormat.Equals(WorkFormat.HYBRID))
+                {
+                    result.Add("Гибрид");
+                }
+            }
+            return String.Join("/", result);
         }
     }
 }

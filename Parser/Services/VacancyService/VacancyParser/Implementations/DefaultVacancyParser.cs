@@ -123,11 +123,12 @@ public class DefaultVacancyParser : IVacancyParser
             Conditions = GetConditions(htmlDocument, parseRules),
             SalaryFrom = GetSalaryFrom(htmlDocument, parseRules),
             SalaryTo = GetSalaryTo(htmlDocument, parseRules),
-            CreationTime = GetCreationTime(htmlDocument, parseRules)
+            CreationTime = GetCreationTime(htmlDocument, parseRules),
+            WorkFormat = GetWorkFormat(htmlDocument, parseRules)
         };
         return vacancy;
     }
-    
+
     protected virtual Dictionary<string, string> GetHeadersForRequest(JsonElement parseRules)
     {
         return new Dictionary<string, string>()
@@ -199,6 +200,7 @@ public class DefaultVacancyParser : IVacancyParser
         {
             return String.Empty;
         }
+
         List<string> parts = cityNode.InnerText.Split(',').ToList();
         if (parts.Count == 0)
         {
@@ -278,11 +280,12 @@ public class DefaultVacancyParser : IVacancyParser
                 resultText.Append(keySkillsNode.InnerText.Trim());
             }
         }
+
         if (resultText.Length != 0)
         {
             return resultText.ToString();
         }
-        
+
         //Если нод не был найден, или в нём не было информации, то получаем ключевые навыки из описания вакансии
         string requirements = GetRequirements(htmlDocument, parseRules);
         // Регулярное выражение для поиска английских слов
@@ -299,6 +302,7 @@ public class DefaultVacancyParser : IVacancyParser
         {
             result.Remove(result.Length - 1, 1);
         }
+
         return result.ToString();
     }
 
@@ -341,15 +345,18 @@ public class DefaultVacancyParser : IVacancyParser
             {
                 return null;
             }
+
             if (values.Count == 2)
             {
                 return values[0];
             }
-            if (values.Count == 1 && text.Contains("до"))
+
+            if (values.Count == 1 && text.Contains("от"))
             {
                 return values[0];
             }
         }
+
         return null;
     }
 
@@ -374,16 +381,52 @@ public class DefaultVacancyParser : IVacancyParser
             {
                 return null;
             }
+
             if (values.Count == 2)
             {
                 return values[1];
             }
-            if (values.Count == 1 && !text.Contains("до"))
+
+            if (values.Count == 1 && text.Contains("до"))
             {
                 return values[0];
             }
         }
+
         return null;
+    }
+
+    protected virtual List<WorkFormat>? GetWorkFormat(HtmlDocument htmlDocument, JsonElement parseRules)
+    {
+        string workFormatXPath;
+        try
+        {
+            workFormatXPath = parseRules.GetProperty("WorkFormatNode").GetString();
+        }
+        catch (Exception e)
+        {
+            return new List<WorkFormat>();
+        }
+
+        HtmlNode workFormatNode = htmlDocument.DocumentNode.SelectSingleNode(workFormatXPath);
+        string text = workFormatNode?.InnerText.Trim().ToLower() ?? string.Empty;
+        List<WorkFormat> workFormats = new List<WorkFormat>();
+        if (text.Contains("удал"))
+        {
+            workFormats.Add(WorkFormat.REMOTE);
+        }
+
+        if (text.Contains("гибр"))
+        {
+            workFormats.Add(WorkFormat.HYBRID);
+        }
+
+        if (text.Length == 0 || workFormats.Count == 0)
+        {
+            workFormats.Add(WorkFormat.INTERNAL);
+        }
+
+        return workFormats;
     }
 
     protected virtual DateTime? GetCreationTime(HtmlDocument htmlDocument, JsonElement parseRules)
