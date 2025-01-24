@@ -34,18 +34,17 @@ public class ResumeCollectorService : IResumesCollectorService
         foreach (SiteParseRule parseRule in siteParseRules)
         {
             String webSiteName = parseRule.SiteName;
-            IResumeUrlExtractor vacancyUrlExtractor = _resumeUrlExtractors.GetValueOrDefault(webSiteName, _resumeUrlExtractors["default"]);
-            IResumeParser vacancyParser = _resumeParsers.GetValueOrDefault(webSiteName, _resumeParsers["default"]);
+            IResumeUrlExtractor resumeUrlExtractor = _resumeUrlExtractors.GetValueOrDefault(webSiteName, _resumeUrlExtractors["default"]);
+            IResumeParser resumeParser = _resumeParsers.GetValueOrDefault(webSiteName, _resumeParsers["default"]);
 
-            List<Uri> linksToVacancies =
-                vacancyUrlExtractor.FindResumeUrls(keyWords, regions, TextParser.ParseStringToJsonElement(parseRule.PageWithResumesParseRule.Rules));
-            List<Resume> vacancies = linksToVacancies
+            List<Uri> linksToResumes =
+                resumeUrlExtractor.FindResumeUrls(keyWords, regions, TextParser.ParseStringToJsonElement(parseRule.PageWithResumesParseRule.Rules));
+            List<Resume> vacancies = linksToResumes
                 .Select(link =>
                 {
                     try
                     {
-                        Thread.Sleep(200);
-                        return vacancyParser.ParseResume(link, TextParser.ParseStringToJsonElement(parseRule.ResumeParseRule.Rules));
+                        return resumeParser.ParseResume(link, TextParser.ParseStringToJsonElement(parseRule.ResumeParseRule.Rules));
                     }
                     catch (Exception ex)
                     {

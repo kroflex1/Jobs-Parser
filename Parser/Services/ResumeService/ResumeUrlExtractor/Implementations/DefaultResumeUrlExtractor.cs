@@ -118,7 +118,8 @@ public class DefaultResumeUrlExtractor : IResumeUrlExtractor
                     return new Uri(nextPageUrl);
                 }
 
-                Uri baseUri = currentPageUrl;
+                Uri baseUri = new Uri(pageWithResumesParseRule.GetProperty("UrlWithResumes").GetString());
+                baseUri = new Uri(baseUri.Host);
                 return new Uri(baseUri, nextPageUrl);
             }
         }
