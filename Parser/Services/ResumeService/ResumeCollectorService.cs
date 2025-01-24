@@ -42,6 +42,7 @@ public class ResumeCollectorService : IResumesCollectorService
             List<Resume> vacancies = linksToResumes
                 .Select(link =>
                 {
+                    Thread.Sleep(500);
                     try
                     {
                         return resumeParser.ParseResume(link, TextParser.ParseStringToJsonElement(parseRule.ResumeParseRule.Rules));

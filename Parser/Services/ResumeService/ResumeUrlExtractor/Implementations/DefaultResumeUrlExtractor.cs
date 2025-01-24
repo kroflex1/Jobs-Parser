@@ -20,6 +20,7 @@ public class DefaultResumeUrlExtractor : IResumeUrlExtractor
         List<Uri> result = new List<Uri>();
         while (currentPageUrl != null)
         {
+            Thread.Sleep(1000);
             HtmlDocument htmlDoc = new HtmlDocument();
             
             if (!currentPageUrl.ToString().StartsWith("file://"))

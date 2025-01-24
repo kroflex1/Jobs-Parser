@@ -39,6 +39,7 @@ public class VacanciesCollectorService : IVacanciesCollector
             List<Vacancy> vacancies = linksToVacancies
                 .Select(link =>
                 {
+                    Thread.Sleep(500);
                     try
                     {
                         return vacancyParser.ParseVacancy(link, TextParser.ParseStringToJsonElement(parseRule.VacancyParseRule.Rules));
